@@ -1,12 +1,45 @@
+'use client'
+
+import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import {
+  ColumnFiltersState,
+  SortingState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from '@tanstack/react-table'
+
+import { columns } from './column'
+import { data } from '@/data/interviews'
 
 import { Button } from '@/components/ui/button'
-import InterviewsTable from './interviews-table'
 import FilterTabs from './filter-tabs'
 import Pagination from '@/components/pagination'
 import SearchBar from '@/components/searchbar'
+import DataTable from '@/components/data-table'
 
 const InterviewsPage = () => {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters
+    }
+  })
+
   return (
     <div className='mt-16 pb-24'>
       <div className='container flex flex-col gap-10'>
@@ -25,7 +58,7 @@ const InterviewsPage = () => {
         </div>
 
         <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>
-          <InterviewsTable />
+          <DataTable table={table} />
           <Pagination />
         </div>
       </div>

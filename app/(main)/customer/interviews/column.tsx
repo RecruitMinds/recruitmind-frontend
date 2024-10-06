@@ -1,6 +1,4 @@
-'use client'
-
-import React, { useState } from 'react'
+import * as React from 'react'
 import {
   Archive,
   CalendarFold,
@@ -10,99 +8,17 @@ import {
   Pencil,
   PencilLine
 } from 'lucide-react'
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
 
-const data: Interview[] = [
-  {
-    id: 'm5gr84i9',
-    name: '.NET Developer - Sri Lanka - Remote',
-    candidates: 1,
-    progress: {
-      completed: 1,
-      started: 0,
-      notStarted: 0,
-      disqualified: 0
-    },
-    lastActivity: '5 days ago',
-    dateCreated: 'Sep 30, 2024',
-    dateExpires: null,
-    status: 'active'
-  },
-  {
-    id: '3u1reuv4',
-    name: 'Frontend Developer - Remote',
-    candidates: 1,
-    progress: {
-      completed: 1,
-      started: 1,
-      notStarted: 0,
-      disqualified: 0
-    },
-    lastActivity: '5 days ago',
-    dateCreated: 'Sep 30, 2024',
-    dateExpires: null,
-    status: 'active'
-  },
-  {
-    id: '2a23fdra',
-    name: 'Full Stack Engineer - UK Remote',
-    candidates: 1,
-    progress: {
-      completed: 17,
-      started: 1,
-      notStarted: 1,
-      disqualified: 1
-    },
-    lastActivity: '5 days ago',
-    dateCreated: 'Sep 30, 2024',
-    dateExpires: null,
-    status: 'active'
-  }
-]
-
-export type Interview = {
-  id: string
-  name: string
-  candidates: number
-  progress: {
-    completed: number
-    started: number
-    notStarted: number
-    disqualified: number
-  }
-  status: 'active' | 'inactive' | 'archived'
-  lastActivity: string
-  dateCreated: string
-  dateExpires: string | null
-}
+import { Interview } from '@/types'
 
 export const columns: ColumnDef<Interview>[] = [
   {
@@ -249,7 +165,7 @@ export const columns: ColumnDef<Interview>[] = [
   }
 ]
 
-const headerClasses = {
+export const headerClasses = {
   lastActivity: 'hidden lg:table-cell',
   dateCreated: 'hidden lg:table-cell',
   dateExpires: 'hidden xl:table-cell',
@@ -258,87 +174,10 @@ const headerClasses = {
   progress: 'hidden sm:table-cell'
 }
 
-const cellClasses = {
+export const cellClasses = {
   lastActivity: 'hidden lg:table-cell',
   dateCreated: 'hidden lg:table-cell',
   dateExpires: 'hidden xl:table-cell',
   candidates: 'hidden sm:table-cell',
   progress: 'hidden sm:table-cell'
 }
-
-const InterviewsTable = () => {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters
-    }
-  })
-  return (
-    <Table className='table-auto'>
-      <TableHeader>
-        {table.getHeaderGroups().map(headerGroup => (
-          <TableRow key={headerGroup.id} className='h-14 hover:bg-white'>
-            {headerGroup.headers.map(header => (
-              <TableHead
-                key={header.id}
-                className={cn(
-                  'text-sm font-bold text-foreground first:pl-6 first:text-left last:pr-6 last:text-right',
-                  headerClasses[header.column.id as keyof typeof headerClasses]
-                )}
-              >
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-
-      <TableBody>
-        {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map(row => (
-            <TableRow
-              key={row.id}
-              className='h-14 text-sm leading-tight text-foreground/80 hover:bg-primary/10'
-            >
-              {row.getVisibleCells().map(cell => (
-                <TableCell
-                  key={cell.id}
-                  className={cn(
-                    'first:pl-6 first:text-left last:pr-6 last:text-right',
-                    cellClasses[cell.column.id as keyof typeof cellClasses]
-                  )}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className='h-24 text-center'>
-              No results.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-  )
-}
-
-export default InterviewsTable
