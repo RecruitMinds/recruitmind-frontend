@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import {
   ColumnFiltersState,
   SortingState,
@@ -22,6 +24,7 @@ import SearchBar from '@/components/searchbar'
 import DataTable from '@/components/data-table'
 
 const InterviewsPage = () => {
+  const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
@@ -46,10 +49,12 @@ const InterviewsPage = () => {
         <div className='mt-10 flex items-center justify-between'>
           <h1 className='text-3xl font-bold leading-8'>Interviews</h1>
 
-          <Button size={'rounded'} className='gap-x-2'>
-            <Plus />
-            Create interview
-          </Button>
+          <Link href={'/customer/interviews/new'}>
+            <Button size={'rounded'} className='gap-x-2'>
+              <Plus />
+              Create interview
+            </Button>
+          </Link>
         </div>
 
         <div className='flex flex-col items-center justify-between gap-5 md:flex-row md:gap-8 lg:gap-0'>
@@ -63,6 +68,7 @@ const InterviewsPage = () => {
             columns={columns}
             headerClasses={headerClasses}
             cellClasses={cellClasses}
+            viewRow={(id: string) => router.push(`/customer/interviews/${id}`)}
           />
           <Pagination />
         </div>

@@ -21,13 +21,15 @@ interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<TData>[]
   headerClasses?: Record<string, string>
   cellClasses?: Record<string, string>
+  viewRow: (id: string) => void
 }
 
 const DataTable = <TData extends RowData>({
   table,
   columns,
   headerClasses,
-  cellClasses
+  cellClasses,
+  viewRow
 }: DataTableProps<TData>) => {
   return (
     <Table className='table-auto'>
@@ -63,6 +65,7 @@ const DataTable = <TData extends RowData>({
             <TableRow
               key={row.id}
               className='h-14 text-sm leading-tight text-foreground/80 hover:bg-primary/10'
+              onClick={() => viewRow(row.id)}
             >
               {row.getVisibleCells().map(cell => (
                 <TableCell
