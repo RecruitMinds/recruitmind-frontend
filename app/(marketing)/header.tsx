@@ -1,5 +1,13 @@
 import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import { Loader, Menu } from 'lucide-react'
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton
+} from '@clerk/nextjs'
 
 import {
   Sheet,
@@ -35,7 +43,25 @@ const Header = () => {
         </ul>
 
         <div className='flex items-center justify-between gap-6'>
-          <Button>Sign In</Button>
+          <ClerkLoading>
+            <Loader className='h-5 w-5 animate-spin text-muted-foreground' />
+          </ClerkLoading>
+          <ClerkLoaded>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton
+                mode='modal'
+                fallbackRedirectUrl='/customer/interviews'
+                signUpFallbackRedirectUrl='/customer/interviews'
+              >
+                <Button size='lg' variant='ghost'>
+                  Login
+                </Button>
+              </SignInButton>
+            </SignedOut>
+          </ClerkLoaded>
         </div>
       </nav>
     </header>

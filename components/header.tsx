@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import { Loader, Menu } from 'lucide-react'
+import { ClerkLoaded, ClerkLoading, SignedIn, UserButton } from '@clerk/nextjs'
 
 import {
   Sheet,
@@ -7,7 +8,6 @@ import {
   SheetContent,
   SheetTrigger
 } from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
 import HeaderItem from './header-item'
 
 const Header = () => {
@@ -30,20 +30,30 @@ const Header = () => {
         </Sheet>
 
         <div className='hidden items-center gap-10 sm:flex'>
-          <Link href='/customer/interviews' className='text-2xl font-bold'>
+          <Link
+            href='/customer/interviews'
+            className='text-2xl font-bold leading-tight tracking-tight'
+          >
             RecruitMind
           </Link>
 
-          <ul className='flex items-center gap-0.5 text-sm'>
+          <ul className='flex items-center gap-0.5 text-sm tracking-tight'>
             <HeaderItem href='/customer/interviews' label='Interviews' />
             <HeaderItem href='/customer/candidates' label='Candidates' />
           </ul>
         </div>
 
         <div className='ml-auto flex items-center justify-between gap-6'>
-          <Button variant={'secondary'} className='size-9 rounded-full p-0'>
-            H
-          </Button>
+          <ClerkLoading>
+            <Loader className='h-5 w-5 animate-spin text-muted-foreground' />
+          </ClerkLoading>
+          <ClerkLoaded>
+            <SignedIn>
+              <UserButton
+                appearance={{ elements: { userButtonAvatarBox: 'h-9 w-9' } }}
+              />
+            </SignedIn>
+          </ClerkLoaded>
         </div>
       </nav>
     </header>
