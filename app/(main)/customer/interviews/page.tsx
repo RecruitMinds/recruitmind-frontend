@@ -12,8 +12,8 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 
-import { columns } from './column'
 import { data } from '@/data/interviews'
+import { cellClasses, columns, headerClasses } from './columns'
 
 import { Button } from '@/components/ui/button'
 import FilterTabs from './filter-tabs'
@@ -58,7 +58,12 @@ const InterviewsPage = () => {
         </div>
 
         <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>
-          <DataTable table={table} />
+          <DataTable
+            table={table}
+            columns={columns}
+            headerClasses={headerClasses}
+            cellClasses={cellClasses}
+          />
           <Pagination />
         </div>
       </div>

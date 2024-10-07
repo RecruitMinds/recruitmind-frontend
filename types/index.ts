@@ -13,3 +13,17 @@ export type Interview = {
   dateCreated: string
   dateExpires: string | null
 }
+
+export type Candidate = {
+  id: string
+  name: string
+  email: string
+  interviews: number
+  jobRole:
+    | '.NET Developer'
+    | 'JavaScript Developer'
+    | 'React Developer'
+    | 'Python Developer'
+    | 'Java Developer'
+  lastActivity: string
+}

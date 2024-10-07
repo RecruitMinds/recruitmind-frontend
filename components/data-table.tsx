@@ -1,12 +1,11 @@
-import { flexRender, useReactTable } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  flexRender,
+  RowData,
+  useReactTable
+} from '@tanstack/react-table'
 
 import { cn } from '@/lib/utils'
-import { Interview } from '@/types'
-import {
-  cellClasses,
-  columns,
-  headerClasses
-} from '@/app/(main)/customer/interviews/column'
 
 import {
   Table,
@@ -17,11 +16,19 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-interface DataTableProps {
-  table: ReturnType<typeof useReactTable<Interview>>
+interface DataTableProps<TData extends RowData> {
+  table: ReturnType<typeof useReactTable<TData>>
+  columns: ColumnDef<TData>[]
+  headerClasses?: Record<string, string>
+  cellClasses?: Record<string, string>
 }
 
-const DataTable = ({ table }: DataTableProps) => {
+const DataTable = <TData extends RowData>({
+  table,
+  columns,
+  headerClasses,
+  cellClasses
+}: DataTableProps<TData>) => {
   return (
     <Table className='table-auto'>
       <TableHeader>
@@ -32,7 +39,10 @@ const DataTable = ({ table }: DataTableProps) => {
                 key={header.id}
                 className={cn(
                   'text-sm font-bold text-foreground first:pl-6 first:text-left last:pr-6 last:text-right',
-                  headerClasses[header.column.id as keyof typeof headerClasses]
+                  headerClasses &&
+                    headerClasses[
+                      header.column.id as keyof typeof headerClasses
+                    ]
                 )}
               >
                 {header.isPlaceholder
@@ -59,7 +69,8 @@ const DataTable = ({ table }: DataTableProps) => {
                   key={cell.id}
                   className={cn(
                     'first:pl-6 first:text-left last:pr-6 last:text-right',
-                    cellClasses[cell.column.id as keyof typeof cellClasses]
+                    cellClasses &&
+                      cellClasses[cell.column.id as keyof typeof cellClasses]
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
