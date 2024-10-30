@@ -26,7 +26,7 @@ const ScoreProgressBar = () => {
         {/* Best candidate marker */}
         <div className='absolute -top-3 h-5 w-[31%] border-r-2 border-black' />
         <div
-          className='absolute -top-9 -translate-x-1/2 transform rounded-full border border-dashed border-black px-2 py-0.5 text-xs font-bold text-gray-500'
+          className='absolute -top-9 -translate-x-1/2 transform rounded-full border border-black px-2 py-0.5 text-xs font-bold text-gray-500'
           style={{ left: `${31}%` }}
         >
           {31}%
@@ -35,7 +35,7 @@ const ScoreProgressBar = () => {
         {/* Candidate average marker */}
         <div className='absolute -bottom-3 h-3 w-[62%] border-r-2 border-black' />
         <div
-          className='absolute -bottom-9 -translate-x-1/2 transform rounded-full border border-muted-foreground px-2 py-0.5 text-xs font-bold text-gray-500'
+          className='absolute -bottom-9 -translate-x-1/2 transform rounded-full border border-dashed border-muted-foreground px-2 py-0.5 text-xs font-bold text-gray-500'
           style={{ left: `${62}%` }}
         >
           {62}%

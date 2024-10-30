@@ -19,16 +19,12 @@ import {
 interface DataTableProps<TData extends RowData> {
   table: ReturnType<typeof useReactTable<TData>>
   columns: ColumnDef<TData>[]
-  headerClasses?: Record<string, string>
-  cellClasses?: Record<string, string>
   viewRow: (id: string) => void
 }
 
 const DataTable = <TData extends RowData>({
   table,
   columns,
-  headerClasses,
-  cellClasses,
   viewRow
 }: DataTableProps<TData>) => {
   return (
@@ -41,10 +37,7 @@ const DataTable = <TData extends RowData>({
                 key={header.id}
                 className={cn(
                   'text-sm font-bold text-foreground first:pl-6 first:text-left last:pr-6 last:text-right',
-                  headerClasses &&
-                    headerClasses[
-                      header.column.id as keyof typeof headerClasses
-                    ]
+                  header.column.columnDef.meta?.headerClasses
                 )}
               >
                 {header.isPlaceholder
@@ -64,7 +57,7 @@ const DataTable = <TData extends RowData>({
           table.getRowModel().rows.map(row => (
             <TableRow
               key={row.id}
-              className='h-14 text-sm leading-tight text-foreground/80 hover:bg-primary/10'
+              className='h-14 cursor-pointer text-sm leading-tight text-foreground/80 hover:bg-primary/10'
               onClick={() => viewRow(row.id)}
             >
               {row.getVisibleCells().map(cell => (
@@ -72,8 +65,7 @@ const DataTable = <TData extends RowData>({
                   key={cell.id}
                   className={cn(
                     'first:pl-6 first:text-left last:pr-6 last:text-right',
-                    cellClasses &&
-                      cellClasses[cell.column.id as keyof typeof cellClasses]
+                    cell.column.columnDef.meta?.cellClasses
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

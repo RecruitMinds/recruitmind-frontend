@@ -15,7 +15,7 @@ import {
 } from '@tanstack/react-table'
 
 import { data } from '@/data/interviews'
-import { cellClasses, columns, headerClasses } from './columns'
+import { columns } from './columns'
 
 import { Button } from '@/components/ui/button'
 import FilterTabs from './filter-tabs'
@@ -66,8 +66,6 @@ const InterviewsPage = () => {
           <DataTable
             table={table}
             columns={columns}
-            headerClasses={headerClasses}
-            cellClasses={cellClasses}
             viewRow={(id: string) => router.push(`/customer/interviews/${id}`)}
           />
           <Pagination />

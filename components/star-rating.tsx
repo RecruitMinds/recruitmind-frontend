@@ -3,8 +3,8 @@
 import { Star } from 'lucide-react'
 import { useState } from 'react'
 
-const StarRating = ({ totalStars = 5 }) => {
-  const [rating, setRating] = useState(0)
+const StarRating = ({ totalStars = 5, initialRating = 0 }) => {
+  const [rating, setRating] = useState(initialRating)
   const [hover, setHover] = useState(0)
 
   return (
