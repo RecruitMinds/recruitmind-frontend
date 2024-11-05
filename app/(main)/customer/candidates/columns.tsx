@@ -17,17 +17,29 @@ export const columns: ColumnDef<Candidate>[] = [
   {
     accessorKey: 'email',
     header: 'Email',
-    cell: ({ row }) => <div>{row.getValue('email')}</div>
+    cell: ({ row }) => <div>{row.getValue('email')}</div>,
+    meta: {
+      headerClasses: 'hidden md:table-cell',
+      cellClasses: 'hidden md:table-cell'
+    }
   },
   {
     accessorKey: 'interviews',
     header: 'Interviews',
-    cell: ({ row }) => <div>{row.getValue('interviews')}</div>
+    cell: ({ row }) => <div>{row.getValue('interviews')}</div>,
+    meta: {
+      headerClasses: 'hidden lg:table-cell',
+      cellClasses: 'hidden lg:table-cell'
+    }
   },
   {
     accessorKey: 'lastActivity',
     header: 'Last activity',
-    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>
+    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>,
+    meta: {
+      headerClasses: 'hidden sm:table-cell',
+      cellClasses: 'hidden sm:table-cell'
+    }
   },
   {
     id: 'view',
@@ -47,15 +59,3 @@ export const columns: ColumnDef<Candidate>[] = [
     }
   }
 ]
-
-export const headerClasses = {
-  email: 'hidden md:table-cell',
-  interviews: 'hidden lg:table-cell',
-  lastActivity: 'hidden sm:table-cell'
-}
-
-export const cellClasses = {
-  email: 'hidden md:table-cell',
-  interviews: 'hidden lg:table-cell',
-  lastActivity: 'hidden sm:table-cell'
-}

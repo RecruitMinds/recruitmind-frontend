@@ -5,15 +5,48 @@ import { cn } from '@/lib/utils'
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className='relative w-full overflow-auto'>
-    <table
-      ref={ref}
-      className={cn('w-full caption-bottom text-sm', className)}
-      {...props}
-    />
-  </div>
-))
+>(({ className, ...props }, ref) => {
+  const wrapperRef = React.useRef<HTMLDivElement>(null)
+  const [isScrolledStart, setIsScrolledStart] = React.useState(false)
+  const [isScrolledEnd, setIsScrolledEnd] = React.useState(false)
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (wrapperRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = wrapperRef.current
+        setIsScrolledStart(scrollLeft > 0)
+        setIsScrolledEnd(Math.ceil(scrollLeft + clientWidth) < scrollWidth)
+      }
+    }
+
+    const wrapper = wrapperRef.current
+    if (wrapper) {
+      wrapper.addEventListener('scroll', handleScroll)
+      handleScroll()
+    }
+
+    return () => {
+      if (wrapper) {
+        wrapper.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [])
+
+  return (
+    <div
+      ref={wrapperRef}
+      className='relative w-full overflow-auto'
+      data-scrolled-start={isScrolledStart}
+      data-scrolled-end={isScrolledEnd}
+    >
+      <table
+        ref={ref}
+        className={cn('w-full caption-bottom text-sm', className)}
+        {...props}
+      />
+    </div>
+  )
+})
 Table.displayName = 'Table'
 
 const TableHeader = React.forwardRef<

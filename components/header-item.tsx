@@ -12,7 +12,7 @@ interface HeaderItemProps {
 
 const HeaderItem = ({ href, label }: HeaderItemProps) => {
   const pathName = usePathname()
-  const active = pathName === href
+  const active = pathName === href || pathName.includes(href)
 
   return (
     <li
