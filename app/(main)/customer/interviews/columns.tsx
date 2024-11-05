@@ -31,7 +31,11 @@ export const columns: ColumnDef<Interview>[] = [
   {
     accessorKey: 'candidates',
     header: 'Candidates',
-    cell: ({ row }) => <div>{row.getValue('candidates')}</div>
+    cell: ({ row }) => <div>{row.getValue('candidates')}</div>,
+    meta: {
+      headerClasses: 'hidden sm:table-cell',
+      cellClasses: 'hidden sm:table-cell'
+    }
   },
   {
     accessorKey: 'progress',
@@ -86,17 +90,29 @@ export const columns: ColumnDef<Interview>[] = [
           <div className='md:hidden'>{completedPercentage} %</div>
         </>
       )
+    },
+    meta: {
+      headerClasses: 'hidden sm:table-cell',
+      cellClasses: 'hidden sm:table-cell'
     }
   },
   {
     accessorKey: 'lastActivity',
     header: 'Last activity',
-    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>
+    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>,
+    meta: {
+      headerClasses: 'hidden lg:table-cell',
+      cellClasses: 'hidden lg:table-cell'
+    }
   },
   {
     accessorKey: 'dateCreated',
     header: 'Date created',
-    cell: ({ row }) => <div>{row.getValue('dateCreated')}</div>
+    cell: ({ row }) => <div>{row.getValue('dateCreated')}</div>,
+    meta: {
+      headerClasses: 'hidden lg:table-cell',
+      cellClasses: 'hidden lg:table-cell'
+    }
   },
   {
     accessorKey: 'dateExpires',
@@ -107,7 +123,11 @@ export const columns: ColumnDef<Interview>[] = [
           ? '_'
           : row.getValue('dateExpires')}
       </div>
-    )
+    ),
+    meta: {
+      headerClasses: 'hidden xl:table-cell',
+      cellClasses: 'hidden xl:table-cell'
+    }
   },
 
   {
@@ -161,23 +181,9 @@ export const columns: ColumnDef<Interview>[] = [
           </Button>
         </>
       )
+    },
+    meta: {
+      headerClasses: 'hidden md:table-cell'
     }
   }
 ]
-
-export const headerClasses = {
-  lastActivity: 'hidden lg:table-cell',
-  dateCreated: 'hidden lg:table-cell',
-  dateExpires: 'hidden xl:table-cell',
-  actions: 'hidden md:table-cell',
-  candidates: 'hidden sm:table-cell',
-  progress: 'hidden sm:table-cell'
-}
-
-export const cellClasses = {
-  lastActivity: 'hidden lg:table-cell',
-  dateCreated: 'hidden lg:table-cell',
-  dateExpires: 'hidden xl:table-cell',
-  candidates: 'hidden sm:table-cell',
-  progress: 'hidden sm:table-cell'
-}
