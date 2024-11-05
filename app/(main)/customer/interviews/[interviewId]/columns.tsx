@@ -1,22 +1,46 @@
 import * as React from 'react'
-import { EllipsisVertical, Settings } from 'lucide-react'
+import {
+  Copy,
+  EllipsisVertical,
+  Mail,
+  Settings,
+  Trash2,
+  UserX
+} from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/components/ui/button'
+import StarRating from '@/components/star-rating'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 import { CandidateList } from '@/types'
-import StarRating from '@/components/star-rating'
 
 export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
   {
     accessorKey: 'name',
     header: 'Name',
-    cell: ({ row }) => <div className='min-w-48'>{row.getValue('name')}</div>
+    cell: ({ row }) => <div className='min-w-48'>{row.getValue('name')}</div>,
+    meta: {
+      headerClasses:
+        'sticky left-0 z-10 transition-shadow duration-200 [div[data-scrolled-start="true"]_&]:bg-white [div[data-scrolled-start="true"]_&]:drop-shadow-xl',
+      cellClasses:
+        'sticky left-0 z-10 bg-white before:absolute before:inset-0 before:-z-10 before:bg-primary/10 before:opacity-0 before:duration-150 group-hover:before:opacity-100 [div[data-scrolled-start="true"]_&]:drop-shadow-xl'
+    }
   },
   {
     accessorKey: 'overall',
     header: 'Overall',
-    cell: ({ row }) => <div className='min-w-32'>{row.getValue('overall')}</div>
+    cell: ({ row }) => (
+      <div className='min-w-28 pl-4'>{row.getValue('overall')}</div>
+    ),
+    meta: {
+      headerClasses: 'pl-4'
+    }
   },
   ...criterias.map(
     criteria =>
@@ -26,7 +50,11 @@ export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
         cell: ({ row }) => {
           const scores = row.original.scores as Record<string, string>
 
-          return <div className='min-w-48'>{scores[`${criteria}`]}</div>
+          return <div>{scores[`${criteria}`]}</div>
+        },
+        meta: {
+          headerClasses: 'max-w-44 pr-12 truncate',
+          cellClasses: 'font-medium'
         }
       }) as ColumnDef<CandidateList>
   ),
@@ -44,7 +72,7 @@ export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
     accessorKey: 'invitedOn',
     header: 'Invited on',
     cell: ({ row }) => (
-      <div className='min-w-48'>{row.getValue('invitedOn')}</div>
+      <div className='min-w-32'>{row.getValue('invitedOn')}</div>
     )
   },
   {
@@ -69,29 +97,48 @@ export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
     cell: () => {
       return (
         <>
-          <Button
-            variant='ghost'
-            size='icon'
-            className='size-10 rounded-full focus-visible:ring-0'
-          >
-            <EllipsisVertical className='size-4' />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className='hidden md:flex'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='size-10 rounded-full focus-visible:ring-0'
+                onClick={() => {}}
+              >
+                <EllipsisVertical className='size-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align='end'
+              className='rounded-[10px] border-none text-foreground/80 shadow-md'
+            >
+              <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
+                <Copy className='size-4' />
+                Copy candidate interview link
+              </DropdownMenuItem>
+              <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
+                <Mail className='size-4' />
+                Send results
+              </DropdownMenuItem>
+              <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
+                <UserX className='size-4' />
+                Reject
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4 text-destructive focus:text-destructive'>
+                <Trash2 className='size-4' />
+                Delete candidate
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </>
       )
+    },
+    meta: {
+      headerClasses:
+        'z-10 min-w-24 transition-shadow duration-200 [div[data-scrolled-end="false"]_&]:bg-transparent [div[data-scrolled-end="false"]_&]:drop-shadow-none [div[data-scrolled-end="true"]_&]:sticky [div[data-scrolled-end="true"]_&]:right-0 [div[data-scrolled-end="true"]_&]:bg-white [div[data-scrolled-end="true"]_&]:drop-shadow-xl',
+      cellClasses:
+        'z-10 bg-white transition-shadow duration-200 before:absolute before:inset-0 before:-z-10 before:bg-primary/10 before:opacity-0 before:duration-150 group-hover:before:opacity-100 [div[data-scrolled-end="false"]_&]:drop-shadow-none [div[data-scrolled-end="true"]_&]:sticky [div[data-scrolled-end="true"]_&]:right-0 [div[data-scrolled-end="true"]_&]:drop-shadow-xl'
     }
   }
 ]
-
-export const headerClasses = {
-  overall: 'hidden md:table-cell',
-  'scores[Core .NET Technical Expertise]': '',
-  'scores[Professional Skills and Collaboration]': 'truncate max-w-16',
-  interviews: 'hidden lg:table-cell',
-  lastActivity: 'hidden sm:table-cell'
-}
-
-export const cellClasses = {
-  email: 'hidden md:table-cell',
-  interviews: 'hidden lg:table-cell',
-  lastActivity: 'hidden sm:table-cell'
-}

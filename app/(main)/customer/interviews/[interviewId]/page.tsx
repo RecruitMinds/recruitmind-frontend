@@ -43,6 +43,23 @@ const criterias_evaluated = [
   'Professional Skills and Collaboration'
 ]
 
+const hiringStage = [
+  { value: 'notEvaluated', label: 'Not yet evaluated' },
+  { value: 'invite', label: 'Invite to Interview' },
+  { value: 'interviewed', label: 'Interviewed' },
+  { value: 'offerSent', label: 'Offer sent' },
+  { value: 'offerDeclined', label: 'Offer declined' },
+  { value: 'rejected', label: 'Rejected' },
+  { value: 'hired', label: 'Hired' }
+]
+
+const candidateStatus = [
+  { value: 'invited', label: 'Invited' },
+  { value: 'started', label: 'Started' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'disqualified', label: 'Disqualified' }
+]
+
 const InterviewPage = () => {
   const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
@@ -132,42 +149,36 @@ const InterviewPage = () => {
               <SearchBar placeholder='Search' className='text-sm' />
 
               <Select>
-                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-56'>
+                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-52'>
                   <SelectValue placeholder='Stage' />
                 </SelectTrigger>
-                <SelectContent className='w-full md:w-56'>
-                  <SelectItem value='.net' className='h-12 rounded-none'>
-                    .NET Developer
-                  </SelectItem>
-                  <SelectItem value='java' className='h-12 rounded-none'>
-                    Java Developer
-                  </SelectItem>
-                  <SelectItem value='javascript' className='h-12 rounded-none'>
-                    JavaScript Developer
-                  </SelectItem>
-                  <SelectItem value='python' className='h-12 rounded-none'>
-                    Python Developer
-                  </SelectItem>
+                <SelectContent className='max-h-64 w-full md:w-52'>
+                  {hiringStage.map(stage => (
+                    <SelectItem
+                      key={stage.value}
+                      value={stage.value}
+                      className='h-12 rounded-none'
+                    >
+                      {stage.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
               <Select>
-                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-56'>
+                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-52'>
                   <SelectValue placeholder='Status' />
                 </SelectTrigger>
-                <SelectContent className='w-full md:w-56'>
-                  <SelectItem value='.net' className='h-12 rounded-none'>
-                    .NET Developer
-                  </SelectItem>
-                  <SelectItem value='java' className='h-12 rounded-none'>
-                    Java Developer
-                  </SelectItem>
-                  <SelectItem value='javascript' className='h-12 rounded-none'>
-                    JavaScript Developer
-                  </SelectItem>
-                  <SelectItem value='python' className='h-12 rounded-none'>
-                    Python Developer
-                  </SelectItem>
+                <SelectContent className='w-full md:w-52'>
+                  {candidateStatus.map(status => (
+                    <SelectItem
+                      key={status.value}
+                      value={status.value}
+                      className='h-12 rounded-none'
+                    >
+                      {status.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

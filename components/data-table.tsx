@@ -57,7 +57,7 @@ const DataTable = <TData extends RowData>({
           table.getRowModel().rows.map(row => (
             <TableRow
               key={row.id}
-              className='h-14 cursor-pointer text-sm leading-tight text-foreground/80 hover:bg-primary/10'
+              className='group h-14 cursor-pointer text-sm leading-tight text-foreground/80 hover:bg-primary/10'
               onClick={() => viewRow(row.id)}
             >
               {row.getVisibleCells().map(cell => (
