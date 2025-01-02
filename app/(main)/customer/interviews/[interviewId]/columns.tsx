@@ -98,7 +98,7 @@ export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
       return (
         <>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className='hidden md:flex'>
+            <DropdownMenuTrigger asChild className='ml-auto hidden md:flex'>
               <Button
                 variant='ghost'
                 size='icon'
