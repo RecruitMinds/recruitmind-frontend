@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
 import { Loader, Menu } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { ClerkLoaded, ClerkLoading, SignedIn, UserButton } from '@clerk/nextjs'
 
 import {
@@ -11,8 +14,13 @@ import {
 import HeaderItem from './header-item'
 
 const Header = () => {
+  const pathName = usePathname()
+  const isNewInterview = pathName.includes('/customer/interviews/new')
+
   return (
-    <header className='fixed inset-x-0 top-0 z-50 border-b bg-background backdrop-blur-sm'>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b bg-background backdrop-blur-sm ${isNewInterview && 'hidden'}`}
+    >
       <nav className='container flex items-center'>
         <Sheet>
           <SheetTrigger className='sm:hidden'>
