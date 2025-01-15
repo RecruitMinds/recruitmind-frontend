@@ -20,12 +20,14 @@ interface DataTableProps<TData extends RowData> {
   table: ReturnType<typeof useReactTable<TData>>
   columns: ColumnDef<TData>[]
   viewRow: (id: string) => void
+  idField: keyof TData
 }
 
 const DataTable = <TData extends RowData>({
   table,
   columns,
-  viewRow
+  viewRow,
+  idField
 }: DataTableProps<TData>) => {
   return (
     <Table className='table-auto'>
@@ -58,7 +60,7 @@ const DataTable = <TData extends RowData>({
             <TableRow
               key={row.id}
               className='group h-14 cursor-pointer text-sm leading-tight text-foreground/80 hover:bg-primary/10'
-              onClick={() => viewRow(row.id)}
+              onClick={() => viewRow(row.original[idField] as string)}
             >
               {row.getVisibleCells().map(cell => (
                 <TableCell
