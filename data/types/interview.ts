@@ -35,3 +35,8 @@ export interface Interview {
   disqualified: number
   completed_percentage: number | null
 }
+
+export interface InterviewList {
+  _id: string
+  name: string
+}

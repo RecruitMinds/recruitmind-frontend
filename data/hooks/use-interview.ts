@@ -8,13 +8,6 @@ import { interviewService } from '../services/interview'
 import { Pagination } from '../types/common'
 import { InterviewStatus } from '../types/interview'
 
-export const interviewKeys = {
-  all: ['interviews'] as const,
-  lists: () => [...interviewKeys.all, 'list'] as const,
-  details: () => [...interviewKeys.all, 'detail'] as const,
-  detail: (id: number) => [...interviewKeys.details(), id] as const
-}
-
 export function useInterviews({
   status,
   pagination,
@@ -28,6 +21,13 @@ export function useInterviews({
     queryKey: ['interviews', pagination, search, status],
     queryFn: () => interviewService.getAll(status, pagination, search),
     placeholderData: keepPreviousData
+  })
+}
+
+export function useInterviewList() {
+  return useQuery({
+    queryKey: ['interviews-list'],
+    queryFn: () => interviewService.getInterviewList()
   })
 }
 

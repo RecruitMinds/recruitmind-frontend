@@ -27,6 +27,7 @@ const CandidatesPage = () => {
   const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
   const [search, setValue] = useDebounceValue('', 500)
+  const [interviewFilter, setinterviewFilter] = useState('')
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10
@@ -34,7 +35,8 @@ const CandidatesPage = () => {
 
   const { data: candidates } = useCandidates({
     pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
-    search
+    search,
+    interview: interviewFilter
   })
 
   const table = useReactTable({
@@ -73,7 +75,7 @@ const CandidatesPage = () => {
             placeholder='Search any candidate by name'
             onChange={e => setValue(e.target.value)}
           />
-          <FilterOptions />
+          <FilterOptions setInterviewFilter={setinterviewFilter} />
         </div>
 
         <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>

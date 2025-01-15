@@ -1,6 +1,6 @@
 import { apiClient } from '../api/client'
 import { PaginatedResponse, Pagination } from '../types/common'
-import { Interview, InterviewStatus } from '../types/interview'
+import { Interview, InterviewList, InterviewStatus } from '../types/interview'
 
 export const interviewService = {
   getAll: async (
@@ -14,6 +14,10 @@ export const interviewService = {
     return apiClient.fetch<PaginatedResponse<Interview>>(
       `interview?page=${page}&limit=${limit}&status=${status}${searchQuery}`
     )
+  },
+
+  getInterviewList: async () => {
+    return apiClient.fetch<InterviewList[]>(`interview/list`)
   },
 
   getById: (id: number) => apiClient.fetch<Interview>(`/interview/${id}`),

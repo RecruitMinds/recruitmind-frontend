@@ -5,27 +5,36 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { useInterviewList } from '@/data/hooks/use-interview'
+import { X } from 'lucide-react'
 
-const FilterOptions = () => {
+interface FilterOptionsProps {
+  setInterviewFilter: (interviewId: string) => void
+}
+
+const FilterOptions = ({ setInterviewFilter }: FilterOptionsProps) => {
+  const { data: interviews, isLoading } = useInterviewList()
+
   return (
     <div className='flex w-full items-center gap-x-3 md:w-auto'>
-      <Select>
-        <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-xs focus-visible:ring-black md:w-56'>
-          <SelectValue placeholder='Interviews' />
+      <Select disabled={isLoading} onValueChange={setInterviewFilter}>
+        <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-xs focus-visible:ring-black md:w-64'>
+          <SelectValue placeholder={isLoading ? 'Loading...' : 'Interviews'} />
         </SelectTrigger>
-        <SelectContent className='w-full md:w-56'>
-          <SelectItem value='.net-developer' className='h-12 rounded-none'>
-            .NET Developer - Sri Lanka - Remote
-          </SelectItem>
-          <SelectItem value='frontend-developer' className='h-12 rounded-none'>
-            Frontend Developer - Remote
-          </SelectItem>
-          <SelectItem value='fullstack-developer' className='h-12 rounded-none'>
-            Full Stack Engineer - UK Remote
-          </SelectItem>
+        <SelectContent className='w-full md:w-64'>
+          {interviews?.map(interview => (
+            <SelectItem
+              key={interview._id}
+              value={interview._id}
+              className='h-12 rounded-none'
+            >
+              {interview.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
+      {/* TODO: Implement Job role based filtering */}
       <Select>
         <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-xs focus-visible:ring-black md:w-56'>
           <SelectValue placeholder='Job role' />
