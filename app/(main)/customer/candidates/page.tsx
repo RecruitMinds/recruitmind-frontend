@@ -5,17 +5,17 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import {
-  ColumnFiltersState,
+  PaginationState,
   SortingState,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import { useDebounceValue } from 'usehooks-ts'
 
-import { data } from '@/data/candidates'
 import { columns } from './columns'
+import { useCandidates } from '@/data/hooks/use-candidate'
 
 import { Button } from '@/components/ui/button'
 import FilterOptions from './filter-options'
@@ -26,20 +26,30 @@ import DataTable from '@/components/data-table'
 const CandidatesPage = () => {
   const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [search, setValue] = useDebounceValue('', 500)
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+
+  const { data: candidates } = useCandidates({
+    pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
+    search
+  })
 
   const table = useReactTable({
-    data,
+    data: candidates?.data ?? [],
     columns,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    pageCount: candidates?.meta.totalPages,
+    manualPagination: true,
     state: {
       sorting,
-      columnFilters
+      pagination
     }
   })
 
@@ -61,6 +71,7 @@ const CandidatesPage = () => {
           <SearchBar
             className='md:max-w-[460px]'
             placeholder='Search any candidate by name'
+            onChange={e => setValue(e.target.value)}
           />
           <FilterOptions />
         </div>
@@ -70,8 +81,9 @@ const CandidatesPage = () => {
             table={table}
             columns={columns}
             viewRow={(id: string) => router.push(`/customer/candidates/${id}`)}
+            idField='_id'
           />
-          <Pagination />
+          <Pagination table={table} totalItems={candidates?.meta.total} />
         </div>
       </div>
     </div>
