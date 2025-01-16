@@ -16,6 +16,15 @@ export enum WorkArrangements {
   HYBRID = 'hybrid'
 }
 
+export interface InterviewProgress {
+  candidates: number
+  invited: number
+  started: number
+  completed: number
+  disqualified: number
+  completed_percentage: number | null
+}
+
 export interface Interview {
   _id: string
   name: string
@@ -28,12 +37,6 @@ export interface Interview {
   recruiter: string
   createdAt: string
   updatedAt: string
-  candidates: number
-  invited: number
-  started: number
-  completed: number
-  disqualified: number
-  completed_percentage: number | null
 }
 
 export interface InterviewList {

@@ -11,7 +11,7 @@ export class ApiError extends Error {
 
 export const apiClient = {
   async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',

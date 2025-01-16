@@ -1,14 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  ColumnFiltersState,
+  PaginationState,
+  SortingState,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable
 } from '@tanstack/react-table'
 import {
@@ -20,21 +19,19 @@ import {
   MapPin,
   SendHorizontal
 } from 'lucide-react'
+import { useDebounceValue } from 'usehooks-ts'
 
-import { data } from '@/data/candidate-list'
+import {
+  useInterview,
+  useInterviewCandidates
+} from '@/data/hooks/use-interview'
+import { CandidateInterviewStatus, HiringStage } from '@/data/types/candidate'
 
 import { Button } from '@/components/ui/button'
 import DataTable from '@/components/data-table'
 import Pagination from '@/components/pagination'
 import { getColumns } from './columns'
-import SearchBar from '@/components/searchbar'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import Filters from './filters'
 
 const criterias_evaluated = [
   'Core .NET Technical Expertise',
@@ -43,40 +40,44 @@ const criterias_evaluated = [
   'Professional Skills and Collaboration'
 ]
 
-const hiringStage = [
-  { value: 'notEvaluated', label: 'Not yet evaluated' },
-  { value: 'invite', label: 'Invite to Interview' },
-  { value: 'interviewed', label: 'Interviewed' },
-  { value: 'offerSent', label: 'Offer sent' },
-  { value: 'offerDeclined', label: 'Offer declined' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'hired', label: 'Hired' }
-]
-
-const candidateStatus = [
-  { value: 'invited', label: 'Invited' },
-  { value: 'started', label: 'Started' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'disqualified', label: 'Disqualified' }
-]
-
-const InterviewPage = () => {
+const InterviewPage = ({
+  params
+}: {
+  params: Promise<{ interviewId: string }>
+}) => {
   const router = useRouter()
+  const { interviewId } = use(params)
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [search, setValue] = useDebounceValue('', 500)
+  const [stage, setStage] = useState<HiringStage | undefined>()
+  const [status, setStatus] = useState<CandidateInterviewStatus | undefined>()
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+
+  const { data: interview } = useInterview(interviewId)
+  const { data: candidates } = useInterviewCandidates({
+    interview: interviewId,
+    pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
+    search,
+    stage,
+    status
+  })
 
   const table = useReactTable({
-    data,
+    data: candidates?.data ?? [],
     columns: getColumns(criterias_evaluated),
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    pageCount: candidates?.meta.totalPages,
+    manualPagination: true,
     state: {
       sorting,
-      columnFilters
+      pagination
     }
   })
 
@@ -97,13 +98,13 @@ const InterviewPage = () => {
             <div className='flex items-center gap-3'>
               <div className='-mt-1'>
                 <h2 className='text-xl font-bold leading-8 text-foreground'>
-                  .NET Developer - Sri Lanka - Remote
+                  {interview?.name}
                 </h2>
                 <div className='flex items-center text-sm text-muted-foreground'>
                   <div className='flex items-center gap-5 leading-tight'>
                     <div className='flex items-center gap-1.5'>
                       <MapPin className='size-4 stroke-2' />
-                      <span>Sri Lanka</span>
+                      <span>{interview?.location}</span>
                     </div>
                     <div className='flex items-center gap-1.5'>
                       <BriefcaseBusiness className='size-4 stroke-2' />
@@ -145,50 +146,19 @@ const InterviewPage = () => {
         <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>
           <div className='flex items-center justify-between border-b px-6 py-4'>
             <strong>Candidates</strong>
-            <div className='flex items-center gap-6'>
-              <SearchBar placeholder='Search' className='text-sm' />
-
-              <Select>
-                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-52'>
-                  <SelectValue placeholder='Stage' />
-                </SelectTrigger>
-                <SelectContent className='max-h-64 w-full md:w-52'>
-                  {hiringStage.map(stage => (
-                    <SelectItem
-                      key={stage.value}
-                      value={stage.value}
-                      className='h-12 rounded-none'
-                    >
-                      {stage.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select>
-                <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black md:w-52'>
-                  <SelectValue placeholder='Status' />
-                </SelectTrigger>
-                <SelectContent className='w-full md:w-52'>
-                  {candidateStatus.map(status => (
-                    <SelectItem
-                      key={status.value}
-                      value={status.value}
-                      className='h-12 rounded-none'
-                    >
-                      {status.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Filters
+              onSearchChange={setValue}
+              onStageChange={setStage}
+              onStatusChange={setStatus}
+            />
           </div>
           <DataTable
             table={table}
             columns={getColumns(criterias_evaluated)}
             viewRow={(id: string) => router.push(`/customer/candidates/${id}`)}
+            idField='_id'
           />
-          <Pagination />
+          <Pagination table={table} totalItems={candidates?.meta.total} />
         </div>
       </div>
     </div>

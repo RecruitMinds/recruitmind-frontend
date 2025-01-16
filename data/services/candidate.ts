@@ -13,7 +13,7 @@ export const candidateService = {
     const interviewQuery = interview ? `&interview=${interview}` : ''
 
     return apiClient.fetch<PaginatedResponse<Candidate>>(
-      `candidate?page=${page}&limit=${limit}${interviewQuery}${searchQuery}`
+      `/candidate?page=${page}&limit=${limit}${interviewQuery}${searchQuery}`
     )
   }
 }

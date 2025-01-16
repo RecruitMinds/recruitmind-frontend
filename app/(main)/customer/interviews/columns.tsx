@@ -17,10 +17,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 
-import { Interview } from '@/data/types/interview'
 import { formatDate, formatRelativeDate } from '@/lib/utils'
+import { Interview, InterviewProgress } from '@/data/types/interview'
 
-export const columns: ColumnDef<Interview>[] = [
+export const columns: ColumnDef<Interview & InterviewProgress>[] = [
   {
     accessorKey: 'name',
     header: 'Name',

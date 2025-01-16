@@ -18,13 +18,16 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 
-import { CandidateList } from '@/types'
+import { CandidateList } from '@/data/types/candidate'
+import { formatSnakeCase, toShortDate } from '@/lib/utils'
 
 export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
   {
-    accessorKey: 'name',
+    accessorKey: 'fullName',
     header: 'Name',
-    cell: ({ row }) => <div className='min-w-48'>{row.getValue('name')}</div>,
+    cell: ({ row }) => (
+      <div className='min-w-48'>{row.getValue('fullName')}</div>
+    ),
     meta: {
       headerClasses:
         'sticky left-0 z-10 transition-shadow duration-200 [div[data-scrolled-start="true"]_&]:bg-white [div[data-scrolled-start="true"]_&]:drop-shadow-xl',
@@ -42,37 +45,41 @@ export const getColumns = (criterias: string[]): ColumnDef<CandidateList>[] => [
       headerClasses: 'pl-4'
     }
   },
-  ...criterias.map(
-    criteria =>
-      ({
-        accessorKey: `scores[${criteria}]`,
-        header: criteria,
-        cell: ({ row }) => {
-          const scores = row.original.scores as Record<string, string>
+  // ...criterias.map(
+  //   criteria =>
+  //     ({
+  //       accessorKey: `scores[${criteria}]`,
+  //       header: criteria,
+  //       cell: ({ row }) => {
+  //         const scores = row.original.scores as Record<string, string>
 
-          return <div>{scores[`${criteria}`]}</div>
-        },
-        meta: {
-          headerClasses: 'max-w-44 pr-12 truncate',
-          cellClasses: 'font-medium'
-        }
-      }) as ColumnDef<CandidateList>
-  ),
+  //         return <div>{scores[`${criteria}`]}</div>
+  //       },
+  //       meta: {
+  //         headerClasses: 'max-w-44 pr-12 truncate',
+  //         cellClasses: 'font-medium'
+  //       }
+  //     }) as ColumnDef<CandidateList>
+  // ),
   {
     accessorKey: 'stage',
     header: 'Hiring stage',
-    cell: ({ row }) => <div className='min-w-48'>{row.getValue('stage')}</div>
+    cell: ({ row }) => (
+      <div className='min-w-48'>{formatSnakeCase(row.getValue('stage'))}</div>
+    )
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <div className='min-w-48'>{row.getValue('status')}</div>
+    cell: ({ row }) => (
+      <div className='min-w-48'>{formatSnakeCase(row.getValue('status'))}</div>
+    )
   },
   {
-    accessorKey: 'invitedOn',
+    accessorKey: 'createdAt',
     header: 'Invited on',
     cell: ({ row }) => (
-      <div className='min-w-32'>{row.getValue('invitedOn')}</div>
+      <div className='min-w-32'>{toShortDate(row.getValue('createdAt'))}</div>
     )
   },
   {
