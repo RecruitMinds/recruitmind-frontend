@@ -13,6 +13,24 @@ import {
 } from '../types/interview'
 import { CandidateInterviewStatus, HiringStage } from '../types/candidate'
 
+const interviewKeys = {
+  all: ['interviews'] as const,
+  lists: () => [...interviewKeys.all, 'list'] as const,
+  paginated: (filters: {
+    status: InterviewStatus
+    pagination: Pagination
+    search?: string
+  }) => [...interviewKeys.all, 'paginated', filters] as const,
+  detail: (id: string) => [...interviewKeys.all, 'detail', id] as const,
+  candidates: (filters: {
+    interview: string
+    pagination: Pagination
+    search?: string
+    stage?: HiringStage
+    status?: CandidateInterviewStatus
+  }) => ['interview-candidates', filters] as const
+}
+
 export function useInterviews({
   status,
   pagination,
@@ -23,7 +41,7 @@ export function useInterviews({
   search?: string
 }) {
   return useQuery({
-    queryKey: ['interviews', pagination, search, status],
+    queryKey: interviewKeys.paginated({ status, pagination, search }),
     queryFn: () => interviewService.getAll(status, pagination, search),
     placeholderData: keepPreviousData
   })
@@ -31,7 +49,7 @@ export function useInterviews({
 
 export function useInterviewList() {
   return useQuery({
-    queryKey: ['interviews-list'],
+    queryKey: interviewKeys.lists(),
     queryFn: () => interviewService.getInterviewList()
   })
 }
@@ -40,7 +58,7 @@ export function useInterview(id: string) {
   const queryClient = useQueryClient()
 
   return useQuery({
-    queryKey: ['interviews', 'detail', id],
+    queryKey: interviewKeys.detail(id),
     queryFn: () => interviewService.getById(id),
     enabled: !!id,
     initialData: () => {
@@ -49,9 +67,10 @@ export function useInterview(id: string) {
         .getQueriesData<PaginatedResponse<Interview & InterviewProgress>>({
           queryKey: ['interviews']
         })
-        .find(([, data]) => data?.data.some(interview => interview._id === id))
+        .find(([, data]) => data?.data?.some(interview => interview._id === id))
 
-      return interviews?.[1]?.data.find(interview => interview._id === id)
+      if (!interviews?.[1]?.data) return undefined
+      return interviews[1].data.find(interview => interview._id === id)
     }
   })
 }
@@ -70,14 +89,13 @@ export function useInterviewCandidates({
   status?: CandidateInterviewStatus
 }) {
   return useQuery({
-    queryKey: [
-      'interview-candidates',
+    queryKey: interviewKeys.candidates({
       interview,
       pagination,
       search,
       stage,
       status
-    ],
+    }),
     queryFn: () =>
       interviewService.getInterviewCandidates(
         interview,
