@@ -34,6 +34,7 @@ export interface Interview {
   workArrangements: WorkArrangements
   skillLevel: SkillLevel
   status: InterviewStatus
+  includeTechnicalAssessment: boolean
   recruiter: string
   createdAt: string
   updatedAt: string
@@ -42,4 +43,33 @@ export interface Interview {
 export interface InterviewList {
   _id: string
   name: string
+}
+
+type Transcript = { role: string; content: string }[]
+
+export interface TechnicalInterview {
+  totalScore: number | null
+  technicalSkillsScore: number | null
+  softSkillsScore: number | null
+  questions: {
+    question: string
+    answer: string
+    evaluation: string
+  }[]
+  transcript: Transcript
+}
+
+export interface TechnicalAssessment {
+  totalScore: number | null
+  questions: {
+    question: {
+      title: string
+      description: string
+      examples: { input: string; output: string; explanations: string }[]
+      constraints: string[]
+    }
+    solution: string
+    evaluation: string
+  }[]
+  transcript: Transcript
 }

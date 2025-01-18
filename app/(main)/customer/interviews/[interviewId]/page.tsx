@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   PaginationState,
@@ -33,13 +33,6 @@ import Pagination from '@/components/pagination'
 import { getColumns } from './columns'
 import Filters from './filters'
 
-const criterias_evaluated = [
-  'Core .NET Technical Expertise',
-  'Architecture and Development Practices',
-  'Problem-Solving and Technical Analysis',
-  'Professional Skills and Collaboration'
-]
-
 const InterviewPage = ({
   params
 }: {
@@ -65,9 +58,13 @@ const InterviewPage = ({
     status
   })
 
+  const is_include_technical_assessment = useMemo(() => {
+    return Boolean(interview?.includeTechnicalAssessment)
+  }, [interview?.includeTechnicalAssessment])
+
   const table = useReactTable({
     data: candidates?.data ?? [],
-    columns: getColumns(criterias_evaluated),
+    columns: getColumns(is_include_technical_assessment),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -154,7 +151,7 @@ const InterviewPage = ({
           </div>
           <DataTable
             table={table}
-            columns={getColumns(criterias_evaluated)}
+            columns={getColumns(is_include_technical_assessment)}
             viewRow={(id: string) => router.push(`/customer/candidates/${id}`)}
             idField='_id'
           />

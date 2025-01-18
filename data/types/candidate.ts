@@ -1,3 +1,5 @@
+import { TechnicalAssessment, TechnicalInterview } from './interview'
+
 export enum CandidateInterviewStatus {
   'INVITED' = 'invited',
   'STARTED' = 'started',
@@ -29,6 +31,11 @@ export interface CandidateList {
   fullName: string
   status: CandidateInterviewStatus
   stage: HiringStage
+  overallScore: number | null
+  technicalInterview: Omit<TechnicalInterview, 'questions' | 'transcript'>
+  technicalAssessment: Omit<TechnicalAssessment, 'questions' | 'transcript'>
+  rating: number | null
+  comment: string | null
   createdAt: string
   updatedAt: string
 }
