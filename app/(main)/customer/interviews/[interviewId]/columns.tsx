@@ -8,6 +8,10 @@ import {
   UserX
 } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
+import { UseMutateAsyncFunction } from '@tanstack/react-query'
+
+import { CandidateList } from '@/data/types/candidate'
+import { formatSnakeCase, toShortDate } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 import StarRating from '@/components/star-rating'
@@ -17,12 +21,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-
-import { CandidateList } from '@/data/types/candidate'
-import { formatSnakeCase, toShortDate } from '@/lib/utils'
+import { AlertConfirmation } from '@/components/alert-confirmation'
 
 export const getColumns = (
-  is_include_technical_assessment: boolean
+  is_include_technical_assessment: boolean,
+  deleteCandidate: UseMutateAsyncFunction<void, Error, string, unknown>
 ): ColumnDef<CandidateList>[] => {
   const columns: ColumnDef<CandidateList>[] = [
     {
@@ -117,9 +120,11 @@ export const getColumns = (
           <Settings />
         </Button>
       ),
-      cell: () => {
+      cell: ({ row }) => {
+        const candidateId = row.original._id
+
         return (
-          <>
+          <div onClick={e => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild className='ml-auto hidden md:flex'>
                 <Button
@@ -148,13 +153,26 @@ export const getColumns = (
                   Reject
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4 text-destructive focus:text-destructive'>
-                  <Trash2 className='size-4' />
-                  Delete candidate
-                </DropdownMenuItem>
+                <AlertConfirmation
+                  title='Delete candidate'
+                  description='Are you sure you want to permanently delete this candidate? Access to the interview will be revoked if the candidate hasn’t completed their interview. After deleting, you can re-invite the candidate.'
+                  onConfirm={async e => {
+                    e.stopPropagation()
+                    await deleteCandidate(candidateId)
+                  }}
+                >
+                  <DropdownMenuItem
+                    onClick={e => e.stopPropagation()}
+                    onSelect={e => e.preventDefault()}
+                    className='h-12 gap-x-3 rounded-none px-4 text-destructive focus:text-destructive'
+                  >
+                    <Trash2 className='size-4' />
+                    Delete candidate
+                  </DropdownMenuItem>
+                </AlertConfirmation>
               </DropdownMenuContent>
             </DropdownMenu>
-          </>
+          </div>
         )
       },
       meta: {

@@ -15,5 +15,11 @@ export const candidateService = {
     return apiClient.fetch<PaginatedResponse<Candidate>>(
       `/candidate?page=${page}&limit=${limit}${interviewQuery}${searchQuery}`
     )
+  },
+
+  delete: async (candidateId: string) => {
+    return apiClient.fetch<void>(`/candidate/${candidateId}`, {
+      method: 'DELETE'
+    })
   }
 }

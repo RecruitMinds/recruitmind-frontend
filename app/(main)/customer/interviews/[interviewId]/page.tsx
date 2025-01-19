@@ -26,6 +26,7 @@ import {
   useInterviewCandidates
 } from '@/data/hooks/use-interview'
 import { useInviteModal } from '@/store/use-invite-modal'
+import { useDeleteCandidate } from '@/data/hooks/use-candidate'
 import { CandidateInterviewStatus, HiringStage } from '@/data/types/candidate'
 
 import Filters from './filters'
@@ -52,6 +53,7 @@ const InterviewPage = ({
     pageSize: 10
   })
 
+  const { mutateAsync: deleteCandidate } = useDeleteCandidate()
   const { data: interview } = useInterview(interviewId)
   const { data: candidates } = useInterviewCandidates({
     interview: interviewId,
@@ -67,7 +69,7 @@ const InterviewPage = ({
 
   const table = useReactTable({
     data: candidates?.data ?? [],
-    columns: getColumns(is_include_technical_assessment),
+    columns: getColumns(is_include_technical_assessment, deleteCandidate),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -159,7 +161,10 @@ const InterviewPage = ({
             </div>
             <DataTable
               table={table}
-              columns={getColumns(is_include_technical_assessment)}
+              columns={getColumns(
+                is_include_technical_assessment,
+                deleteCandidate
+              )}
               viewRow={(id: string) =>
                 router.push(`/customer/candidates/${id}`)
               }
