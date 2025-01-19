@@ -4,9 +4,11 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
+
 import { interviewService } from '../services/interview'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
+  CreateInterview,
   Interview,
   InterviewProgress,
   InterviewStatus
@@ -108,24 +110,19 @@ export function useInterviewCandidates({
   })
 }
 
-// export function useInterview(id: number) {
-//   return useQuery({
-//     queryKey: interviewKeys.detail(id),
-//     queryFn: () => interviewService.getById(id),
-//     enabled: !!id
-//   })
-// }
+export function useCreateInterview() {
+  const queryClient = useQueryClient()
 
-// export function useCreateInterview() {
-//   const queryClient = useQueryClient()
-
-//   return useMutation({
-//     mutationFn: (data: Omit<Interview, 'id'>) => interviewService.create(data),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
-//     }
-//   })
-// }
+  return useMutation({
+    mutationFn: (data: CreateInterview) => interviewService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
+      queryClient.invalidateQueries({
+        queryKey: [...interviewKeys.all, 'paginated']
+      })
+    }
+  })
+}
 
 // export function useUpdateInterview() {
 //   const queryClient = useQueryClient()

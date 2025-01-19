@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 import Providers from './providers'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
   title: 'RecruitMind',
@@ -17,7 +18,10 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang='en' className='scroll-smooth'>
-        <body className='antialiased'>{children}</body>
+        <body className='antialiased'>
+          {children}
+          <Toaster />
+        </body>
       </html>
     </Providers>
   )

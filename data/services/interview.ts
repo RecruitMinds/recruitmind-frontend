@@ -6,6 +6,7 @@ import {
 } from '../types/candidate'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
+  CreateInterview,
   Interview,
   InterviewList,
   InterviewProgress,
@@ -47,13 +48,13 @@ export const interviewService = {
     return apiClient.fetch<PaginatedResponse<CandidateList>>(
       `/interview/${interview}/candidates?page=${page}&limit=${limit}${searchQuery}${stageQuery}${statusQuery}`
     )
-  }
+  },
 
-  // create: (data: Omit<Interview, 'id'>) =>
-  //   apiClient.fetch<Interview>('/interview', {
-  //     method: 'POST',
-  //     body: JSON.stringify(data)
-  //   }),
+  create: (data: CreateInterview) =>
+    apiClient.fetch<Interview>('/interview', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
 
   // update: (id: number, data: Partial<Interview>) =>
   //   apiClient.fetch<Interview>(`/interview/${id}`, {

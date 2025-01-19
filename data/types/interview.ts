@@ -40,6 +40,17 @@ export interface Interview {
   updatedAt: string
 }
 
+export interface CreateInterview {
+  name: string
+  description: string
+  role: string
+  location: string
+  workArrangements: WorkArrangements
+  skillLevel?: SkillLevel
+  includeTechnicalAssessment: boolean
+  status: InterviewStatus
+}
+
 export interface InterviewList {
   _id: string
   name: string
