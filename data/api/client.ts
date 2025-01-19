@@ -25,6 +25,15 @@ export const apiClient = {
       throw new ApiError(response.status, error.message || 'An error occurred')
     }
 
+    // Check if response has content before parsing JSON
+    const contentLength = response.headers.get('content-length')
+    const hasContent = contentLength && parseInt(contentLength) > 0
+
+    // If no content, return undefined for void responses
+    if (!hasContent) {
+      return undefined as T
+    }
+
     return response.json()
   }
 }

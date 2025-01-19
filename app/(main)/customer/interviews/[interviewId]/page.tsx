@@ -169,7 +169,7 @@ const InterviewPage = ({
           </div>
         </div>
       </div>
-      <InviteModal />
+      <InviteModal interviewwId={interviewId} />
     </>
   )
 }

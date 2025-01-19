@@ -10,7 +10,8 @@ import {
   Interview,
   InterviewList,
   InterviewProgress,
-  InterviewStatus
+  InterviewStatus,
+  InviteCandidate
 } from '../types/interview'
 
 export const interviewService = {
@@ -54,6 +55,18 @@ export const interviewService = {
     apiClient.fetch<Interview>('/interview', {
       method: 'POST',
       body: JSON.stringify(data)
+    }),
+
+  inviteCandidate: ({
+    interview,
+    candidates
+  }: {
+    interview: string
+    candidates: InviteCandidate[]
+  }) =>
+    apiClient.fetch<void>(`/interview/${interview}/invite`, {
+      method: 'POST',
+      body: JSON.stringify({ candidates })
     })
 
   // update: (id: number, data: Partial<Interview>) =>

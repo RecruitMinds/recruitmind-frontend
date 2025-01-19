@@ -11,7 +11,8 @@ import {
   CreateInterview,
   Interview,
   InterviewProgress,
-  InterviewStatus
+  InterviewStatus,
+  InviteCandidate
 } from '../types/interview'
 import { CandidateInterviewStatus, HiringStage } from '../types/candidate'
 
@@ -117,6 +118,24 @@ export function useCreateInterview() {
     mutationFn: (data: CreateInterview) => interviewService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
+      queryClient.invalidateQueries({
+        queryKey: [...interviewKeys.all, 'paginated']
+      })
+    }
+  })
+}
+
+export function useInviteCandidate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { interview: string; candidates: InviteCandidate[] }) =>
+      interviewService.inviteCandidate(data),
+    onSuccess: (_, { interview }) => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+      queryClient.invalidateQueries({
+        queryKey: ['interview-candidates', { interview }]
+      })
       queryClient.invalidateQueries({
         queryKey: [...interviewKeys.all, 'paginated']
       })

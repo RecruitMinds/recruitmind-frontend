@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 
 import { useInviteModal } from '@/store/use-invite-modal'
 import { inviteFormSchema, InviteFormValues } from '@/lib/schemas'
+import { useInviteCandidate } from '@/data/hooks/use-interview'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -30,11 +32,11 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { ScrollArea } from '../ui/scroll-area'
 
-const InviteModal = () => {
+const InviteModal = ({ interviewwId }: { interviewwId: string }) => {
   const { isOpen, onClose } = useInviteModal()
   const [candidates, setCandidates] = useState<InviteFormValues[]>([])
+  const inviteCandidate = useInviteCandidate()
 
   const form = useForm<InviteFormValues>({
     resolver: zodResolver(inviteFormSchema),
@@ -62,11 +64,9 @@ const InviteModal = () => {
     setCandidates([])
   }
 
-  const onInvite = () => {
-    // Here you would typically send the invites using the candidates array
-    // and the email template from the useEmailTemplate store
-    // console.log('Sending invites with template:', template)
-    console.log('To candidates:', candidates)
+  const onInvite = async () => {
+    await inviteCandidate.mutateAsync({ interview: interviewwId, candidates })
+    toast.success('Invitations sent.')
     onClose()
   }
 

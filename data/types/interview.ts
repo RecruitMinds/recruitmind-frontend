@@ -51,6 +51,12 @@ export interface CreateInterview {
   status: InterviewStatus
 }
 
+export interface InviteCandidate {
+  firstName: string
+  lastName: string
+  email: string
+}
+
 export interface InterviewList {
   _id: string
   name: string
