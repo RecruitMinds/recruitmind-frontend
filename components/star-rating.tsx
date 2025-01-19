@@ -3,7 +3,11 @@
 import { Star } from 'lucide-react'
 import { useState } from 'react'
 
-const StarRating = ({ totalStars = 5, initialRating = 0 }) => {
+const StarRating = ({
+  totalStars = 5,
+  initialRating = 0,
+  readOnly = false
+}) => {
   const [rating, setRating] = useState(initialRating)
   const [hover, setHover] = useState(0)
 
@@ -15,12 +19,12 @@ const StarRating = ({ totalStars = 5, initialRating = 0 }) => {
         return (
           <Star
             key={index}
-            className={`size-5 cursor-pointer fill-current ${
+            className={`size-5 ${!readOnly && 'cursor-pointer'} fill-current ${
               starValue <= (hover || rating) ? 'text-primary' : 'text-input'
-            } hover:text-primary`}
-            onClick={() => setRating(starValue)}
-            onMouseEnter={() => setHover(starValue)}
-            onMouseLeave={() => setHover(rating)}
+            } ${!readOnly && 'hover:text-primary'}`}
+            onClick={() => !readOnly && setRating(starValue)}
+            onMouseEnter={() => !readOnly && setHover(starValue)}
+            onMouseLeave={() => !readOnly && setHover(rating)}
           />
         )
       })}

@@ -2,16 +2,18 @@ import * as React from 'react'
 import { ChevronRight } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/utils'
+import { Candidate } from '@/data/types/candidate'
 
-import { Candidate } from '@/types'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export const columns: ColumnDef<Candidate>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'fullName',
     header: 'Name',
     cell: ({ row }) => (
-      <div className='w-full lg:min-w-52'>{row.getValue('name')}</div>
+      <div className='w-full lg:min-w-52'>{row.getValue('fullName')}</div>
     )
   },
   {
@@ -24,29 +26,29 @@ export const columns: ColumnDef<Candidate>[] = [
     }
   },
   {
-    accessorKey: 'interviews',
+    accessorKey: 'interviews_count',
     header: 'Interviews',
-    cell: ({ row }) => <div>{row.getValue('interviews')}</div>,
+    cell: ({ row }) => <div>{row.getValue('interviews_count')}</div>,
     meta: {
       headerClasses: 'hidden lg:table-cell',
       cellClasses: 'hidden lg:table-cell'
     }
   },
   {
-    accessorKey: 'lastActivity',
+    accessorKey: 'updatedAt',
     header: 'Last activity',
-    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>,
+    cell: ({ row }) => <div>{formatDate(row.getValue('updatedAt'))}</div>,
     meta: {
       headerClasses: 'hidden sm:table-cell',
       cellClasses: 'hidden sm:table-cell'
     }
   },
   {
-    id: 'view',
+    accessorKey: '_id',
     header: '',
-    cell: () => {
+    cell: ({ row }) => {
       return (
-        <>
+        <Link href={`/customer/candidates/${row.getValue('_id')}`}>
           <Button
             variant='ghost'
             size='icon'
@@ -54,7 +56,7 @@ export const columns: ColumnDef<Candidate>[] = [
           >
             <ChevronRight className='size-4' />
           </Button>
-        </>
+        </Link>
       )
     }
   }

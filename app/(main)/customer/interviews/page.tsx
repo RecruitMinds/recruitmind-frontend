@@ -5,17 +5,18 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import {
-  ColumnFiltersState,
+  PaginationState,
   SortingState,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import { useDebounceValue } from 'usehooks-ts'
 
-import { data } from '@/data/interviews'
 import { columns } from './columns'
+import { InterviewStatus } from '@/data/types/interview'
+import { useInterviews } from '@/data/hooks/use-interview'
 
 import { Button } from '@/components/ui/button'
 import FilterTabs from './filter-tabs'
@@ -26,20 +27,32 @@ import DataTable from '@/components/data-table'
 const InterviewsPage = () => {
   const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [search, setValue] = useDebounceValue('', 500)
+  const [status, setStatus] = useState<InterviewStatus>(InterviewStatus.ACTIVE)
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+
+  const { data: interviews } = useInterviews({
+    status,
+    pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
+    search
+  })
 
   const table = useReactTable({
-    data,
+    data: interviews?.data ?? [],
     columns,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    pageCount: interviews?.meta.totalPages,
+    manualPagination: true,
     state: {
       sorting,
-      columnFilters
+      pagination
     }
   })
 
@@ -58,8 +71,12 @@ const InterviewsPage = () => {
         </div>
 
         <div className='flex flex-col items-center justify-between gap-5 md:flex-row md:gap-8 lg:gap-0'>
-          <SearchBar className='md:max-w-[460px]' placeholder='Search' />
-          <FilterTabs />
+          <SearchBar
+            className='md:max-w-[460px]'
+            placeholder='Search'
+            onChange={e => setValue(e.target.value)}
+          />
+          <FilterTabs activeStatus={status} onStatusChange={setStatus} />
         </div>
 
         <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>
@@ -67,8 +84,9 @@ const InterviewsPage = () => {
             table={table}
             columns={columns}
             viewRow={(id: string) => router.push(`/customer/interviews/${id}`)}
+            idField='_id'
           />
-          <Pagination />
+          <Pagination table={table} totalItems={interviews?.meta.total} />
         </div>
       </div>
     </div>
