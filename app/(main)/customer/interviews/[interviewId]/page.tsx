@@ -23,7 +23,8 @@ import { useDebounceValue } from 'usehooks-ts'
 
 import {
   useInterview,
-  useInterviewCandidates
+  useInterviewCandidates,
+  useUpdateCandidateInterview
 } from '@/data/hooks/use-interview'
 import { useInviteModal } from '@/store/use-invite-modal'
 import { useDeleteCandidate } from '@/data/hooks/use-candidate'
@@ -35,6 +36,7 @@ import { Button } from '@/components/ui/button'
 import DataTable from '@/components/data-table'
 import Pagination from '@/components/pagination'
 import InviteModal from '@/components/modal/invite-modal'
+import { toast } from 'sonner'
 
 const InterviewPage = ({
   params
@@ -54,6 +56,7 @@ const InterviewPage = ({
   })
 
   const { mutateAsync: deleteCandidate } = useDeleteCandidate()
+  const { mutateAsync: updateCandiateInterview } = useUpdateCandidateInterview()
   const { data: interview } = useInterview(interviewId)
   const { data: candidates } = useInterviewCandidates({
     interview: interviewId,
@@ -63,13 +66,27 @@ const InterviewPage = ({
     status
   })
 
+  const rejectCandidate = async (id: string) => {
+    await updateCandiateInterview({
+      interview: interviewId,
+      candidate: id,
+      data: {
+        stage: HiringStage.REJECTED
+      }
+    })
+  }
+
   const is_include_technical_assessment = useMemo(() => {
     return Boolean(interview?.includeTechnicalAssessment)
   }, [interview?.includeTechnicalAssessment])
 
   const table = useReactTable({
     data: candidates?.data ?? [],
-    columns: getColumns(is_include_technical_assessment, deleteCandidate),
+    columns: getColumns(
+      is_include_technical_assessment,
+      deleteCandidate,
+      rejectCandidate
+    ),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -163,7 +180,8 @@ const InterviewPage = ({
               table={table}
               columns={getColumns(
                 is_include_technical_assessment,
-                deleteCandidate
+                deleteCandidate,
+                rejectCandidate
               )}
               viewRow={(id: string) =>
                 router.push(`/customer/candidates/${id}`)

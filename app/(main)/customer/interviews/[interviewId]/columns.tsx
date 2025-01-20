@@ -27,7 +27,8 @@ import { AlertConfirmation } from '@/components/alert-confirmation'
 
 export const getColumns = (
   is_include_technical_assessment: boolean,
-  deleteCandidate: UseMutateAsyncFunction<void, Error, string, unknown>
+  deleteCandidate: UseMutateAsyncFunction<void, Error, string, unknown>,
+  rejectCandidate: (id: string) => Promise<void>
 ): ColumnDef<CandidateList>[] => {
   const columns: ColumnDef<CandidateList>[] = [
     {
@@ -158,7 +159,17 @@ export const getColumns = (
                   <Mail className='size-4' />
                   Send results
                 </DropdownMenuItem>
-                <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
+                <DropdownMenuItem
+                  className='h-12 gap-x-3 rounded-none px-4'
+                  onClick={async e => {
+                    e.stopPropagation()
+                    await rejectCandidate(candidateId).then(() => {
+                      toast.success(
+                        `Candidate '${row.original.fullName}' rejected.`
+                      )
+                    })
+                  }}
+                >
                   <UserX className='size-4' />
                   Reject
                 </DropdownMenuItem>
