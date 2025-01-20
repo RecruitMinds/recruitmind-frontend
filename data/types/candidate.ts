@@ -34,6 +34,7 @@ export interface CandidateList {
   overallScore: number | null
   technicalInterview: Omit<TechnicalInterview, 'questions' | 'transcript'>
   technicalAssessment: Omit<TechnicalAssessment, 'questions' | 'transcript'>
+  invitationToken: string
   rating: number | null
   comment: string | null
   createdAt: string

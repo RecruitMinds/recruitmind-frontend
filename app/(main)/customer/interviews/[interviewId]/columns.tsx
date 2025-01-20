@@ -9,9 +9,11 @@ import {
 } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 import { UseMutateAsyncFunction } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import { CandidateList } from '@/data/types/candidate'
 import { formatSnakeCase, toShortDate } from '@/lib/utils'
+import { API_BASE_URL } from '@/data/api/client'
 
 import { Button } from '@/components/ui/button'
 import StarRating from '@/components/star-rating'
@@ -140,7 +142,15 @@ export const getColumns = (
                 align='end'
                 className='rounded-[10px] border-none text-foreground/80 shadow-md'
               >
-                <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
+                <DropdownMenuItem
+                  className='h-12 gap-x-3 rounded-none px-4'
+                  onClick={e => {
+                    e.stopPropagation()
+                    const interviewLink = `${API_BASE_URL}/interview/${row.original.invitationToken}`
+                    navigator.clipboard.writeText(interviewLink)
+                    toast.success('Interview link copied to clipboard')
+                  }}
+                >
                   <Copy className='size-4' />
                   Copy candidate interview link
                 </DropdownMenuItem>
