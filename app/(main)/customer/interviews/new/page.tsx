@@ -9,12 +9,12 @@ import { Pencil, Timer } from 'lucide-react'
 import * as z from 'zod'
 
 import { useCreateInterview } from '@/data/hooks/use-interview'
+import { CreateInterview } from '@/data/types/interview'
 import {
-  CreateInterview,
   InterviewStatus,
   SkillLevel,
   WorkArrangements
-} from '@/data/types/interview'
+} from '@/data/types/enums'
 
 import { Button } from '@/components/ui/button'
 import {

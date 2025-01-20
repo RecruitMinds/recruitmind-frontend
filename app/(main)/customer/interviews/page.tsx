@@ -15,7 +15,7 @@ import {
 import { useDebounceValue } from 'usehooks-ts'
 
 import { columns } from './columns'
-import { InterviewStatus } from '@/data/types/interview'
+import { InterviewStatus } from '@/data/types/enums'
 import { useInterviews } from '@/data/hooks/use-interview'
 
 import { Button } from '@/components/ui/button'

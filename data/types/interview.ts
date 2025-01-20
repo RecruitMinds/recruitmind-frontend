@@ -1,20 +1,10 @@
-export enum InterviewStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  ARCHIVED = 'archived'
-}
-
-export enum SkillLevel {
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard'
-}
-
-export enum WorkArrangements {
-  REMOTE = 'remote',
-  ONSITE = 'onsite',
-  HYBRID = 'hybrid'
-}
+import {
+  CandidateInterviewStatus,
+  HiringStage,
+  InterviewStatus,
+  SkillLevel,
+  WorkArrangements
+} from './enums'
 
 export interface InterviewProgress {
   candidates: number
@@ -60,6 +50,13 @@ export interface InviteCandidate {
 export interface InterviewList {
   _id: string
   name: string
+}
+
+export interface UpdateCandidateInterview {
+  status?: CandidateInterviewStatus
+  stage?: HiringStage
+  rating?: number
+  comment?: string
 }
 
 type Transcript = { role: string; content: string }[]

@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select'
 
 import { formatSnakeCase } from '@/lib/utils'
-import { CandidateInterviewStatus, HiringStage } from '@/data/types/candidate'
+import { CandidateInterviewStatus, HiringStage } from '@/data/types/enums'
 
 interface FiltersProps {
   onSearchChange: (value: string) => void

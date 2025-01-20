@@ -11,10 +11,14 @@ import {
   CreateInterview,
   Interview,
   InterviewProgress,
-  InterviewStatus,
-  InviteCandidate
+  InviteCandidate,
+  UpdateCandidateInterview
 } from '../types/interview'
-import { CandidateInterviewStatus, HiringStage } from '../types/candidate'
+import {
+  CandidateInterviewStatus,
+  HiringStage,
+  InterviewStatus
+} from '../types/enums'
 
 const interviewKeys = {
   all: ['interviews'] as const,
@@ -143,18 +147,47 @@ export function useInviteCandidate() {
   })
 }
 
-// export function useUpdateInterview() {
-//   const queryClient = useQueryClient()
+export function useUpdateInterview() {
+  const queryClient = useQueryClient()
 
-//   return useMutation({
-//     mutationFn: ({ id, data }: { id: number; data: Partial<Interview> }) =>
-//       interviewService.update(id, data),
-//     onSuccess: (_, { id }) => {
-//       queryClient.invalidateQueries({ queryKey: interviewKeys.detail(id) })
-//       queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
-//     }
-//   })
-// }
+  return useMutation({
+    mutationFn: ({
+      id,
+      data
+    }: {
+      id: string
+      data: Partial<CreateInterview>
+    }) => interviewService.update(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.detail(id) })
+      queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
+      queryClient.invalidateQueries({
+        queryKey: [...interviewKeys.all, 'paginated']
+      })
+    }
+  })
+}
+
+export function useUpdateCandidateInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      interview,
+      candidate,
+      data
+    }: {
+      interview: string
+      candidate: string
+      data: Partial<UpdateCandidateInterview>
+    }) => interviewService.updateCandidateInterview(interview, candidate, data),
+    onSuccess: (_, { interview }) => {
+      queryClient.invalidateQueries({
+        queryKey: ['interview-candidates', { interview }]
+      })
+    }
+  })
+}
 
 // export function useDeleteInterview() {
 //   const queryClient = useQueryClient()

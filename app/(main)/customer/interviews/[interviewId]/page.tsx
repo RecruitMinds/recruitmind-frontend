@@ -27,7 +27,7 @@ import {
 } from '@/data/hooks/use-interview'
 import { useInviteModal } from '@/store/use-invite-modal'
 import { useDeleteCandidate } from '@/data/hooks/use-candidate'
-import { CandidateInterviewStatus, HiringStage } from '@/data/types/candidate'
+import { CandidateInterviewStatus, HiringStage } from '@/data/types/enums'
 
 import Filters from './filters'
 import { getColumns } from './columns'

@@ -1,4 +1,4 @@
-import { InterviewStatus } from '@/data/types/interview'
+import { InterviewStatus } from '@/data/types/enums'
 import { cn } from '@/lib/utils'
 
 interface FilterTabsProps {

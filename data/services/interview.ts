@@ -1,18 +1,19 @@
 import { apiClient } from '../api/client'
-import {
-  CandidateInterviewStatus,
-  CandidateList,
-  HiringStage
-} from '../types/candidate'
+import { CandidateList } from '../types/candidate'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
   CreateInterview,
   Interview,
   InterviewList,
   InterviewProgress,
-  InterviewStatus,
-  InviteCandidate
+  InviteCandidate,
+  UpdateCandidateInterview
 } from '../types/interview'
+import {
+  InterviewStatus,
+  HiringStage,
+  CandidateInterviewStatus
+} from '../types/enums'
 
 export const interviewService = {
   getAll: async (
@@ -67,13 +68,26 @@ export const interviewService = {
     apiClient.fetch<void>(`/interview/${interview}/invite`, {
       method: 'POST',
       body: JSON.stringify({ candidates })
-    })
+    }),
 
-  // update: (id: number, data: Partial<Interview>) =>
-  //   apiClient.fetch<Interview>(`/interview/${id}`, {
-  //     method: 'PATCH',
-  //     body: JSON.stringify(data)
-  //   }),
+  update: (id: string, data: Partial<CreateInterview>) =>
+    apiClient.fetch<Interview>(`/interview/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    }),
+
+  updateCandidateInterview: (
+    interview: string,
+    candidate: string,
+    data: UpdateCandidateInterview
+  ) =>
+    apiClient.fetch<Interview>(
+      `/interview/${interview}/candidates/${candidate}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data)
+      }
+    )
 
   // delete: (id: number) =>
   //   apiClient.fetch<void>(`/interview/${id}`, {
