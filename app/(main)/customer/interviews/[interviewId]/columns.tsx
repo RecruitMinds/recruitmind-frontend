@@ -8,12 +8,14 @@ import {
   UserX
 } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
-import { UseMutateAsyncFunction } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { API_BASE_URL } from '@/data/api/client'
+import { HiringStage } from '@/data/types/enums'
 import { CandidateList } from '@/data/types/candidate'
 import { formatSnakeCase, toShortDate } from '@/lib/utils'
-import { API_BASE_URL } from '@/data/api/client'
+import { useDeleteCandidate } from '@/data/hooks/use-candidate'
+import { useUpdateCandidateInterview } from '@/data/hooks/use-interview'
 
 import { Button } from '@/components/ui/button'
 import StarRating from '@/components/star-rating'
@@ -24,12 +26,19 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { AlertConfirmation } from '@/components/alert-confirmation'
+import HiringStageSelect from '@/components/hiring-stage-select'
 
 export const getColumns = (
   is_include_technical_assessment: boolean,
-  deleteCandidate: UseMutateAsyncFunction<void, Error, string, unknown>,
-  rejectCandidate: (id: string) => Promise<void>
+  interviewId: string
 ): ColumnDef<CandidateList>[] => {
+  const { mutateAsync: deleteCandidate } = useDeleteCandidate()
+  const {
+    mutateAsync: updateCandiateInterview,
+    isPending,
+    variables
+  } = useUpdateCandidateInterview()
+
   const columns: ColumnDef<CandidateList>[] = [
     {
       accessorKey: 'fullName',
@@ -83,15 +92,41 @@ export const getColumns = (
     {
       accessorKey: 'stage',
       header: 'Hiring stage',
-      cell: ({ row }) => (
-        <div className='min-w-48'>{formatSnakeCase(row.getValue('stage'))}</div>
-      )
+      cell: ({ row }) => {
+        const currentStage = row.getValue('stage') as HiringStage
+        const candidateId = row.original._id
+        const isThisRowUpdating =
+          isPending && variables?.candidate === candidateId
+
+        return (
+          <div className='min-w-56'>
+            <HiringStageSelect
+              value={currentStage}
+              onValueChange={async newStage => {
+                await updateCandiateInterview(
+                  {
+                    interview: interviewId,
+                    candidate: candidateId,
+                    data: { stage: newStage }
+                  },
+                  {
+                    onError: () => {
+                      toast.error('Failed to update hiring stage')
+                    }
+                  }
+                )
+              }}
+              loading={isThisRowUpdating}
+            />
+          </div>
+        )
+      }
     },
     {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => (
-        <div className='min-w-48'>
+        <div className='min-w-40'>
           {formatSnakeCase(row.getValue('status'))}
         </div>
       )
@@ -155,15 +190,21 @@ export const getColumns = (
                   <Copy className='size-4' />
                   Copy candidate interview link
                 </DropdownMenuItem>
+
                 <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
                   <Mail className='size-4' />
                   Send results
                 </DropdownMenuItem>
+
                 <DropdownMenuItem
                   className='h-12 gap-x-3 rounded-none px-4'
                   onClick={async e => {
                     e.stopPropagation()
-                    await rejectCandidate(candidateId).then(() => {
+                    updateCandiateInterview({
+                      interview: interviewId,
+                      candidate: candidateId,
+                      data: { stage: HiringStage.REJECTED }
+                    }).then(() => {
                       toast.success(
                         `Candidate '${row.original.fullName}' rejected.`
                       )

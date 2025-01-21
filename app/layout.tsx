@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './globals.css'
 
 import Providers from './providers'
@@ -21,6 +22,7 @@ export default function RootLayout({
         <body className='antialiased'>
           {children}
           <Toaster />
+          <ReactQueryDevtools initialIsOpen={false} />
         </body>
       </html>
     </Providers>

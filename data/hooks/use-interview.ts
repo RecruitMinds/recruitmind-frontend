@@ -181,7 +181,41 @@ export function useUpdateCandidateInterview() {
       candidate: string
       data: Partial<UpdateCandidateInterview>
     }) => interviewService.updateCandidateInterview(interview, candidate, data),
-    onSuccess: (_, { interview }) => {
+    onMutate: async ({ interview, candidate, data }) => {
+      await queryClient.cancelQueries({
+        queryKey: ['interview-candidates', { interview }]
+      })
+
+      const queries = queryClient.getQueriesData<any>({
+        queryKey: ['interview-candidates']
+      })
+
+      const matchingQuery = queries.find(([queryKey]) => {
+        const filters = queryKey[1] as any
+        return filters?.interview === interview
+      })
+
+      if (!matchingQuery) return { previousData: null }
+
+      const [queryKey, previousData] = matchingQuery
+
+      queryClient.setQueryData(queryKey, (old: any) => ({
+        ...old,
+        data: old.data.map((c: any) =>
+          c._id === candidate ? { ...c, ...data } : c
+        )
+      }))
+
+      return { previousData, queryKey }
+    },
+
+    onError: (err, _, context) => {
+      if (context?.queryKey) {
+        queryClient.setQueryData(context.queryKey, context.previousData)
+      }
+    },
+
+    onSettled: (_, __, { interview }) => {
       queryClient.invalidateQueries({
         queryKey: ['interview-candidates', { interview }]
       })
