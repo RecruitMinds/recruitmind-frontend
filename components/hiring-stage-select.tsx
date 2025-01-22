@@ -1,5 +1,5 @@
 import { HiringStage } from '@/data/types/enums'
-import { formatSnakeCase } from '@/lib/utils'
+import { cn, formatSnakeCase } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -13,13 +13,15 @@ interface HiringStageSelectProps {
   onValueChange: (value: HiringStage) => void
   disabled?: boolean
   loading?: boolean
+  className?: React.ComponentProps<'div'>['className']
 }
 
 const HiringStageSelect = ({
   value,
   onValueChange,
   disabled = false,
-  loading = false
+  loading = false,
+  className
 }: HiringStageSelectProps) => {
   return (
     <Select
@@ -28,9 +30,11 @@ const HiringStageSelect = ({
       disabled={disabled || loading}
     >
       <SelectTrigger
-        className={`h-8 w-[180px] rounded-[10px] border-muted-foreground/60 pr-1.5 focus:ring-foreground ${
-          loading ? 'opacity-50' : ''
-        }`}
+        className={cn(
+          'h-8 w-[180px] rounded-[10px] border-muted-foreground/60 pr-1.5 focus:ring-foreground',
+          loading ? 'opacity-50' : '',
+          className
+        )}
       >
         <SelectValue defaultValue={value} />
       </SelectTrigger>

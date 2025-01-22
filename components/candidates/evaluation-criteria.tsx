@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator'
 
 const evaluationCriteria = [
   {
-    name: 'Core JavaScript Knowledge',
+    name: 'Core Technical Knowledge',
     score: 58,
     description:
       "Assesses the candidate's understanding of fundamental JavaScript concepts such as variables, data types, functions, closures, and the event loop.",
@@ -33,32 +33,32 @@ const evaluationCriteria = [
       'Time and space complexity analysis'
     ]
   },
-  {
-    name: 'Modern JavaScript Ecosystem',
-    score: 17,
-    description:
-      "Measures the candidate's familiarity with modern JavaScript tools, frameworks, and best practices.",
-    subCriteria: [
-      'ES6+ features',
-      'Node.js and npm',
-      'Babel and webpack',
-      'React, Vue, or Angular knowledge',
-      'Testing frameworks (Jest, Mocha)'
-    ]
-  },
-  {
-    name: 'Code Quality and Best Practices',
-    score: 20,
-    description:
-      "Assesses the candidate's ability to write clean, maintainable, and efficient JavaScript code.",
-    subCriteria: [
-      'Code readability and organization',
-      'Proper error handling',
-      'Performance considerations',
-      'Security best practices',
-      'Documentation and comments'
-    ]
-  },
+  // {
+  //   name: 'Modern JavaScript Ecosystem',
+  //   score: 17,
+  //   description:
+  //     "Measures the candidate's familiarity with modern JavaScript tools, frameworks, and best practices.",
+  //   subCriteria: [
+  //     'ES6+ features',
+  //     'Node.js and npm',
+  //     'Babel and webpack',
+  //     'React, Vue, or Angular knowledge',
+  //     'Testing frameworks (Jest, Mocha)'
+  //   ]
+  // },
+  // {
+  //   name: 'Code Quality and Best Practices',
+  //   score: 20,
+  //   description:
+  //     "Assesses the candidate's ability to write clean, maintainable, and efficient JavaScript code.",
+  //   subCriteria: [
+  //     'Code readability and organization',
+  //     'Proper error handling',
+  //     'Performance considerations',
+  //     'Security best practices',
+  //     'Documentation and comments'
+  //   ]
+  // },
   {
     name: 'Soft Skills and Collaboration',
     score: 12,

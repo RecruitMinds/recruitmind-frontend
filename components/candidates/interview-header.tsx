@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
+import StarRating from '../star-rating'
 
 const InterviewHeader = () => {
   return (
@@ -15,12 +16,8 @@ const InterviewHeader = () => {
             .NET Developer - Sri Lanka - Remote
           </span>
         </div>
-        <div className='flex items-center'>
-          {[...Array(4)].map((_, i) => (
-            <Star key={i} className='size-5 fill-current text-primary' />
-          ))}
-          <Star className='size-5 fill-current text-input' />
-        </div>
+
+        <StarRating initialRating={4} totalStars={5} readOnly={true} />
       </div>
 
       <div className='flex items-center gap-2'>
