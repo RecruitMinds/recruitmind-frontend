@@ -21,7 +21,7 @@ const InterviewCard = ({ interviewId, candidateId }: InterviewCardProps) => {
       </CardContent>
 
       <CardFooter className='mt-3 grid grid-cols-2 border-t p-10'>
-        <InterviewFooter />
+        <InterviewFooter interviewId={interviewId} candidateId={candidateId} />
       </CardFooter>
     </Card>
   )
