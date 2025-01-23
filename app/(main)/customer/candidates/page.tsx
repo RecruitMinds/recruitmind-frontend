@@ -17,11 +17,12 @@ import { useDebounceValue } from 'usehooks-ts'
 import { columns } from './columns'
 import { useCandidates } from '@/data/hooks/use-candidate'
 
-import { Button } from '@/components/ui/button'
 import FilterOptions from './filter-options'
-import Pagination from '@/components/pagination'
+import Loading from '@/components/loading'
 import SearchBar from '@/components/searchbar'
+import { Button } from '@/components/ui/button'
 import DataTable from '@/components/data-table'
+import Pagination from '@/components/pagination'
 
 const CandidatesPage = () => {
   const router = useRouter()
@@ -33,7 +34,7 @@ const CandidatesPage = () => {
     pageSize: 10
   })
 
-  const { data: candidates } = useCandidates({
+  const { data: candidates, isLoading: loadingCandidates } = useCandidates({
     pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
     search,
     interview: interviewFilter
@@ -54,6 +55,8 @@ const CandidatesPage = () => {
       pagination
     }
   })
+
+  if (loadingCandidates) return <Loading />
 
   return (
     <div className='mt-16 pb-24'>

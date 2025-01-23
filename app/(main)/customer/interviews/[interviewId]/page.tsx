@@ -20,20 +20,26 @@ import {
   SendHorizontal
 } from 'lucide-react'
 import { useDebounceValue } from 'usehooks-ts'
+import { toast } from 'sonner'
 
 import {
   useInterview,
-  useInterviewCandidates
+  useInterviewCandidates,
+  useUpdateCandidateInterview
 } from '@/data/hooks/use-interview'
 import { useInviteModal } from '@/store/use-invite-modal'
+import { useDeleteCandidate } from '@/data/hooks/use-candidate'
 import { CandidateInterviewStatus, HiringStage } from '@/data/types/enums'
 
 import Filters from './filters'
 import { getColumns } from './columns'
+import Loading from '@/components/loading'
 import { Button } from '@/components/ui/button'
 import DataTable from '@/components/data-table'
 import Pagination from '@/components/pagination'
 import InviteModal from '@/components/modal/invite-modal'
+
+const INITIAL_PAGE_SIZE = 10
 
 const InterviewPage = ({
   params
@@ -42,32 +48,66 @@ const InterviewPage = ({
 }) => {
   const router = useRouter()
   const { interviewId } = use(params)
-  const { onOpen } = useInviteModal()
+  const { onOpen: openInviteModal } = useInviteModal()
   const [sorting, setSorting] = useState<SortingState>([])
-  const [search, setValue] = useDebounceValue('', 500)
-  const [stage, setStage] = useState<HiringStage | undefined>()
-  const [status, setStatus] = useState<CandidateInterviewStatus | undefined>()
+  const [searchQuery, setSearchQuery] = useDebounceValue('', 500)
+  const [hiringStage, setHiringStage] = useState<HiringStage>()
+  const [status, setStatus] = useState<CandidateInterviewStatus>()
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10
+    pageSize: INITIAL_PAGE_SIZE
   })
 
-  const { data: interview } = useInterview(interviewId)
-  const { data: candidates } = useInterviewCandidates({
-    interview: interviewId,
-    pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
-    search,
-    stage,
-    status
-  })
+  const { data: interview, isLoading: loadingInterview } =
+    useInterview(interviewId)
+  const { data: candidates, isLoading: loadingCandidates } =
+    useInterviewCandidates({
+      interview: interviewId,
+      pagination: {
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize
+      },
+      search: searchQuery,
+      stage: hiringStage,
+      status
+    })
 
-  const is_include_technical_assessment = useMemo(() => {
+  const { mutateAsync: deleteCandidate } = useDeleteCandidate()
+  const {
+    mutateAsync: updateStage,
+    isPending: updatingStage,
+    variables: updateVars
+  } = useUpdateCandidateInterview()
+
+  const handleStageUpdate = async (candidateId: string, stage: HiringStage) => {
+    await updateStage(
+      {
+        candidate: candidateId,
+        interview: interviewId,
+        data: { stage }
+      },
+      { onError: () => toast.error('Failed to update hiring stage') }
+    )
+  }
+
+  const isUpdatingCandidate = (candidateId: string) => {
+    return updatingStage && updateVars?.candidate === candidateId
+  }
+
+  const hasTechnicalAssessment = useMemo(() => {
     return Boolean(interview?.includeTechnicalAssessment)
   }, [interview?.includeTechnicalAssessment])
 
+  const tableColumns = getColumns(
+    hasTechnicalAssessment,
+    handleStageUpdate,
+    isUpdatingCandidate,
+    deleteCandidate
+  )
+
   const table = useReactTable({
     data: candidates?.data ?? [],
-    columns: getColumns(is_include_technical_assessment, interviewId),
+    columns: tableColumns,
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -75,16 +115,21 @@ const InterviewPage = ({
     getFilteredRowModel: getFilteredRowModel(),
     pageCount: candidates?.meta.totalPages,
     manualPagination: true,
-    state: {
-      sorting,
-      pagination
-    }
+    state: { sorting, pagination }
   })
+
+  if (loadingInterview || loadingCandidates) {
+    return <Loading />
+  }
+
+  const navigateToCandidate = (id: string) => {
+    router.push(`/customer/interviews/${interviewId}/candidates/${id}`)
+  }
 
   return (
     <>
       <div className='flex flex-col gap-11 pb-12 pt-[60px]'>
-        <div className='flex h-20 items-center border-b bg-background'>
+        <header className='flex h-20 items-center border-b bg-background'>
           <div className='container flex items-center'>
             <Button
               variant='outline'
@@ -138,38 +183,34 @@ const InterviewPage = ({
               </Button>
               <Button
                 size='rounded'
-                onClick={onOpen}
+                onClick={openInviteModal}
                 className='flex items-center gap-2.5'
               >
                 <SendHorizontal size={20} /> Invite
               </Button>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className='container'>
+        <main className='container'>
           <div className='-mt-3 w-full overflow-hidden rounded-[10px] border bg-white md:mt-0'>
             <div className='flex items-center justify-between border-b px-6 py-4'>
               <strong>Candidates</strong>
               <Filters
-                onSearchChange={setValue}
-                onStageChange={setStage}
+                onSearchChange={setSearchQuery}
+                onStageChange={setHiringStage}
                 onStatusChange={setStatus}
               />
             </div>
             <DataTable
               table={table}
-              columns={getColumns(is_include_technical_assessment, interviewId)}
-              viewRow={(id: string) =>
-                router.push(
-                  `/customer/interviews/${interviewId}/candidates/${id}`
-                )
-              }
+              columns={tableColumns}
+              viewRow={navigateToCandidate}
               idField='_id'
             />
             <Pagination table={table} totalItems={candidates?.meta.total} />
           </div>
-        </div>
+        </main>
       </div>
       <InviteModal interviewwId={interviewId} />
     </>

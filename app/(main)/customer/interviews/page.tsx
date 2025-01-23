@@ -18,11 +18,12 @@ import { columns } from './columns'
 import { InterviewStatus } from '@/data/types/enums'
 import { useInterviews } from '@/data/hooks/use-interview'
 
-import { Button } from '@/components/ui/button'
 import FilterTabs from './filter-tabs'
-import Pagination from '@/components/pagination'
+import Loading from '@/components/loading'
 import SearchBar from '@/components/searchbar'
+import { Button } from '@/components/ui/button'
 import DataTable from '@/components/data-table'
+import Pagination from '@/components/pagination'
 
 const InterviewsPage = () => {
   const router = useRouter()
@@ -34,7 +35,7 @@ const InterviewsPage = () => {
     pageSize: 10
   })
 
-  const { data: interviews } = useInterviews({
+  const { data: interviews, isLoading: loadingInterviews } = useInterviews({
     status,
     pagination: { page: pagination.pageIndex + 1, limit: pagination.pageSize },
     search
@@ -55,6 +56,8 @@ const InterviewsPage = () => {
       pagination
     }
   })
+
+  if (loadingInterviews) return <Loading />
 
   return (
     <div className='mt-16 pb-24'>

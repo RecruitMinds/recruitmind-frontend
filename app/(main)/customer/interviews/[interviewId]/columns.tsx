@@ -14,8 +14,6 @@ import { API_BASE_URL } from '@/data/api/client'
 import { HiringStage } from '@/data/types/enums'
 import { CandidateList } from '@/data/types/candidate'
 import { formatSnakeCase, toShortDate } from '@/lib/utils'
-import { useDeleteCandidate } from '@/data/hooks/use-candidate'
-import { useUpdateCandidateInterview } from '@/data/hooks/use-interview'
 
 import { Button } from '@/components/ui/button'
 import StarRating from '@/components/star-rating'
@@ -30,15 +28,10 @@ import HiringStageSelect from '@/components/hiring-stage-select'
 
 export const getColumns = (
   is_include_technical_assessment: boolean,
-  interviewId: string
+  handleStageUpdate: (candidateId: string, stage: HiringStage) => Promise<void>,
+  isUpdatingCandidate: (candidateId: string) => boolean,
+  deleteCandidate: (candidateId: string) => Promise<void>
 ): ColumnDef<CandidateList>[] => {
-  const { mutateAsync: deleteCandidate } = useDeleteCandidate()
-  const {
-    mutateAsync: updateCandiateInterview,
-    isPending,
-    variables
-  } = useUpdateCandidateInterview()
-
   const columns: ColumnDef<CandidateList>[] = [
     {
       accessorKey: 'fullName',
@@ -95,26 +88,14 @@ export const getColumns = (
       cell: ({ row }) => {
         const currentStage = row.getValue('stage') as HiringStage
         const candidateId = row.original._id
-        const isThisRowUpdating =
-          isPending && variables?.candidate === candidateId
+        const isThisRowUpdating = isUpdatingCandidate(candidateId)
 
         return (
           <div className='min-w-56'>
             <HiringStageSelect
               value={currentStage}
               onValueChange={async newStage => {
-                await updateCandiateInterview(
-                  {
-                    interview: interviewId,
-                    candidate: candidateId,
-                    data: { stage: newStage }
-                  },
-                  {
-                    onError: () => {
-                      toast.error('Failed to update hiring stage')
-                    }
-                  }
-                )
+                await handleStageUpdate(candidateId, newStage)
               }}
               loading={isThisRowUpdating}
             />
@@ -200,15 +181,13 @@ export const getColumns = (
                   className='h-12 gap-x-3 rounded-none px-4'
                   onClick={async e => {
                     e.stopPropagation()
-                    updateCandiateInterview({
-                      interview: interviewId,
-                      candidate: candidateId,
-                      data: { stage: HiringStage.REJECTED }
-                    }).then(() => {
-                      toast.success(
-                        `Candidate '${row.original.fullName}' rejected.`
-                      )
-                    })
+                    handleStageUpdate(candidateId, HiringStage.REJECTED).then(
+                      () => {
+                        toast.success(
+                          `Candidate '${row.original.fullName}' rejected.`
+                        )
+                      }
+                    )
                   }}
                 >
                   <UserX className='size-4' />

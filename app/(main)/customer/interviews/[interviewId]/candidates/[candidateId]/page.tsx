@@ -5,6 +5,7 @@ import { use } from 'react'
 import { useCandidate } from '@/data/hooks/use-candidate'
 import { useInvitableInterviews } from '@/data/hooks/use-interview'
 
+import Loading from '@/components/loading'
 import CandidateHeader from '@/components/candidates/candidate-header'
 import InterviewCard from '@/components/candidates/interview-card'
 
@@ -18,7 +19,7 @@ const CandidateResultPage = ({
   const { isLoading: isInterviewsLoading } = useInvitableInterviews(candidateId)
 
   if (isCandidateLoading || isInterviewsLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   return (
