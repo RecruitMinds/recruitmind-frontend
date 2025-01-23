@@ -25,3 +25,13 @@ export function formatSnakeCase(str: string): string {
     )
     .join(' ')
 }
+
+export function getInitials(name: string) {
+  return name
+    .split(/\s/)
+    .map(part => part.substring(0, 1).toUpperCase())
+    .filter(v => !!v)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+}

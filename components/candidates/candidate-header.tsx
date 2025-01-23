@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/button'
 import CandidateProfile from './candidate-profile'
 import InterviewInvite from './interview-invite'
 
-const CandidateHeader = () => {
+interface CandidateHeaderProps {
+  candidateId: string
+}
+
+const CandidateHeader = ({ candidateId }: CandidateHeaderProps) => {
   const router = useRouter()
 
   return (
@@ -23,10 +27,10 @@ const CandidateHeader = () => {
         </Button>
 
         {/* Profile details */}
-        <CandidateProfile />
+        <CandidateProfile candidateId={candidateId} />
 
         {/* Invite interview */}
-        <InterviewInvite />
+        <InterviewInvite candidateId={candidateId} />
       </div>
     </div>
   )

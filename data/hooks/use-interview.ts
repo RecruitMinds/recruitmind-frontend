@@ -2,7 +2,8 @@ import {
   keepPreviousData,
   useMutation,
   useQuery,
-  useQueryClient
+  useQueryClient,
+  UseQueryOptions
 } from '@tanstack/react-query'
 
 import { interviewService } from '../services/interview'
@@ -19,6 +20,7 @@ import {
   HiringStage,
   InterviewStatus
 } from '../types/enums'
+import { CandidateList } from '../types/candidate'
 
 const interviewKeys = {
   all: ['interviews'] as const,
@@ -186,12 +188,14 @@ export function useUpdateCandidateInterview() {
         queryKey: ['interview-candidates', { interview }]
       })
 
-      const queries = queryClient.getQueriesData<any>({
+      const queries = queryClient.getQueriesData<
+        PaginatedResponse<CandidateList>
+      >({
         queryKey: ['interview-candidates']
       })
 
       const matchingQuery = queries.find(([queryKey]) => {
-        const filters = queryKey[1] as any
+        const filters = queryKey[1] as { interview?: string }
         return filters?.interview === interview
       })
 
@@ -199,12 +203,18 @@ export function useUpdateCandidateInterview() {
 
       const [queryKey, previousData] = matchingQuery
 
-      queryClient.setQueryData(queryKey, (old: any) => ({
-        ...old,
-        data: old.data.map((c: any) =>
-          c._id === candidate ? { ...c, ...data } : c
-        )
-      }))
+      queryClient.setQueryData<PaginatedResponse<CandidateList>>(
+        queryKey,
+        old => {
+          if (!old) return old
+          return {
+            ...old,
+            data: old.data.map(c =>
+              c._id === candidate ? { ...c, ...data } : c
+            )
+          }
+        }
+      )
 
       return { previousData, queryKey }
     },
@@ -218,6 +228,35 @@ export function useUpdateCandidateInterview() {
     onSettled: (_, __, { interview }) => {
       queryClient.invalidateQueries({
         queryKey: ['interview-candidates', { interview }]
+      })
+    }
+  })
+}
+
+export function useInvitableInterviews(candidateId: string, options = {}) {
+  return useQuery({
+    queryKey: ['invitable-interviews', candidateId],
+    queryFn: () => interviewService.getInvitableInterviews(candidateId),
+    ...options
+  })
+}
+
+export function useInviteExistingCandidate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { interview: string; candidate: string }) =>
+      interviewService.inviteExistingCandidate(data.interview, data.candidate),
+    onSuccess: (_, { interview, candidate }) => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] })
+      queryClient.invalidateQueries({
+        queryKey: ['interview-candidates', { interview }]
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['invitable-interviews', candidate]
+      })
+      queryClient.invalidateQueries({
+        queryKey: [...interviewKeys.all, 'paginated']
       })
     }
   })

@@ -52,6 +52,12 @@ export const interviewService = {
     )
   },
 
+  getInvitableInterviews: async (candidateId: string) => {
+    return apiClient.fetch<InterviewList[]>(
+      `/interview/candidates/${candidateId}/invitable`
+    )
+  },
+
   create: (data: CreateInterview) =>
     apiClient.fetch<Interview>('/interview', {
       method: 'POST',
@@ -68,6 +74,12 @@ export const interviewService = {
     apiClient.fetch<void>(`/interview/${interview}/invite`, {
       method: 'POST',
       body: JSON.stringify({ candidates })
+    }),
+
+  inviteExistingCandidate: (interview: string, candidate: string) =>
+    apiClient.fetch<Interview>(`/interview/${interview}/invite-existing`, {
+      method: 'POST',
+      body: JSON.stringify({ candidateId: candidate })
     }),
 
   update: (id: string, data: Partial<CreateInterview>) =>

@@ -161,7 +161,9 @@ const InterviewPage = ({
               table={table}
               columns={getColumns(is_include_technical_assessment, interviewId)}
               viewRow={(id: string) =>
-                router.push(`/customer/candidates/${id}`)
+                router.push(
+                  `/customer/interviews/${interviewId}/candidates/${id}`
+                )
               }
               idField='_id'
             />

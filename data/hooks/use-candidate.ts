@@ -24,6 +24,14 @@ export function useCandidates({
   })
 }
 
+export function useCandidate(candidateId: string, options = {}) {
+  return useQuery({
+    queryKey: ['candidates', 'detail', candidateId],
+    queryFn: () => candidateService.get(candidateId),
+    ...options
+  })
+}
+
 export function useDeleteCandidate() {
   const queryClient = useQueryClient()
 

@@ -4,7 +4,12 @@ import InterviewHeader from './interview-header'
 import InterviewDetails from './interview-details'
 import InterviewFooter from './interview-footer'
 
-const InterviewCard = () => {
+interface InterviewCardProps {
+  interviewId: string
+  candidateId: string
+}
+
+const InterviewCard = ({ interviewId, candidateId }: InterviewCardProps) => {
   return (
     <Card className='w-full rounded-[10px] shadow-sm'>
       <CardHeader className='p-10'>

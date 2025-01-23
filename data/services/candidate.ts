@@ -17,6 +17,10 @@ export const candidateService = {
     )
   },
 
+  get: async (candidateId: string) => {
+    return apiClient.fetch<Candidate>(`/candidate/${candidateId}`)
+  },
+
   delete: async (candidateId: string) => {
     return apiClient.fetch<void>(`/candidate/${candidateId}`, {
       method: 'DELETE'
