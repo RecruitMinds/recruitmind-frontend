@@ -8,6 +8,7 @@ export interface Candidate {
   updatedAt: string
   fullName: string
   interviews_count: number
+  interviews: string[]
 }
 
 export interface CandidateList {
