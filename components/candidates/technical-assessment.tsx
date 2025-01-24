@@ -1,15 +1,23 @@
+import type { TechnicalAssessment } from '@/data/types/interview'
+
 import ScoreCard from './score-card'
 import TranscriptMessage from './transcript-message'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const TechnicalAssessment = () => {
+interface TechnicalAssessmentProps {
+  assessment?: TechnicalAssessment
+}
+
+const TechnicalAssessment = ({ assessment }: TechnicalAssessmentProps) => {
+  const totalScore = assessment?.totalScore ?? 0
+
   return (
     <>
       <h1 className='text-lg font-bold'>Technical Assessment</h1>
       <div className='mt-4 space-y-6'>
         <div className='grid max-w-xs grid-cols-1'>
-          <ScoreCard title='Total Score' score={78} />
+          <ScoreCard title='Total Score' score={totalScore} />
         </div>
 
         <Tabs defaultValue='challenges' className='w-full'>
@@ -25,6 +33,17 @@ const TechnicalAssessment = () => {
           <TabsContent value='challenges' className='mt-6'>
             <ScrollArea className='flex h-full max-h-96 flex-col'>
               <div className='space-y-6'>
+                {assessment?.questions?.map((question, index) => (
+                  <CodingChallenge
+                    key={index}
+                    title={question.question.title}
+                    description={question.question.description}
+                    solution={question.solution}
+                    evaluation={question.evaluation}
+                  />
+                ))}
+
+                {/* TODO: Remove Sample Coding Challenge */}
                 <CodingChallenge
                   title='Array Manipulation'
                   description='Implement a function that finds the two numbers in an array that sum up to a target value.'
@@ -48,6 +67,15 @@ const TechnicalAssessment = () => {
           <TabsContent value='transcript' className='mt-6'>
             <ScrollArea className='flex h-full max-h-96 flex-col'>
               <div className='space-y-4'>
+                {assessment?.transcript?.map((message, index) => (
+                  <TranscriptMessage
+                    key={index}
+                    role={message.role}
+                    content={message.content}
+                  />
+                ))}
+
+                {/* TODO: Remove Sample Transcripts */}
                 <TranscriptMessage
                   role='AI Interviewer'
                   content='Technical assessment started.'

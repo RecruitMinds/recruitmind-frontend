@@ -3,7 +3,10 @@
 import { use } from 'react'
 
 import { useCandidate } from '@/data/hooks/use-candidate'
-import { useInvitableInterviews } from '@/data/hooks/use-interview'
+import {
+  useInvitableInterviews,
+  useCandidateInterviewDetails
+} from '@/data/hooks/use-interview'
 
 import Loading from '@/components/loading'
 import CandidateHeader from '@/components/candidates/candidate-header'
@@ -17,8 +20,12 @@ const CandidateResultPage = ({
   const { candidateId, interviewId } = use(params)
   const { isLoading: isCandidateLoading } = useCandidate(candidateId)
   const { isLoading: isInterviewsLoading } = useInvitableInterviews(candidateId)
+  const { isLoading: isCandiateInteviewLoading } = useCandidateInterviewDetails(
+    candidateId,
+    interviewId
+  )
 
-  if (isCandidateLoading || isInterviewsLoading) {
+  if (isCandidateLoading || isInterviewsLoading || isCandiateInteviewLoading) {
     return <Loading />
   }
 

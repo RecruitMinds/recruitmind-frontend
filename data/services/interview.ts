@@ -2,11 +2,12 @@ import { apiClient } from '../api/client'
 import { CandidateList } from '../types/candidate'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
-  CreateInterview,
   Interview,
   InterviewList,
-  InterviewProgress,
+  CreateInterview,
   InviteCandidate,
+  InterviewProgress,
+  CandidateInterviewDetail,
   UpdateCandidateInterview
 } from '../types/interview'
 import {
@@ -55,6 +56,15 @@ export const interviewService = {
   getInvitableInterviews: async (candidateId: string) => {
     return apiClient.fetch<InterviewList[]>(
       `/interview/candidates/${candidateId}/invitable`
+    )
+  },
+
+  getCandidateInterviewDetails: async (
+    candidate: string,
+    interview: string
+  ) => {
+    return apiClient.fetch<CandidateInterviewDetail>(
+      `/interview/${interview}/candidates/${candidate}/details`
     )
   },
 

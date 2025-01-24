@@ -13,11 +13,11 @@ const InterviewCard = ({ interviewId, candidateId }: InterviewCardProps) => {
   return (
     <Card className='w-full rounded-[10px] shadow-sm'>
       <CardHeader className='p-10'>
-        <InterviewHeader />
+        <InterviewHeader interviewId={interviewId} candidateId={candidateId} />
       </CardHeader>
 
       <CardContent className='px-10'>
-        <InterviewDetails />
+        <InterviewDetails interviewId={interviewId} candidateId={candidateId} />
       </CardContent>
 
       <CardFooter className='mt-3 grid grid-cols-2 border-t p-10'>

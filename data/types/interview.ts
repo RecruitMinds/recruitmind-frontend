@@ -65,17 +65,17 @@ export interface TechnicalInterview {
   totalScore: number | null
   technicalSkillsScore: number | null
   softSkillsScore: number | null
-  questions: {
+  questions?: {
     question: string
     answer: string
     evaluation: string
   }[]
-  transcript: Transcript
+  transcript?: Transcript
 }
 
 export interface TechnicalAssessment {
   totalScore: number | null
-  questions: {
+  questions?: {
     question: {
       title: string
       description: string
@@ -85,5 +85,21 @@ export interface TechnicalAssessment {
     solution: string
     evaluation: string
   }[]
-  transcript: Transcript
+  transcript?: Transcript
+}
+
+export interface CandidateInterviewDetail {
+  _id: string
+  name: string
+  status: string
+  stage: string
+  bestScore: number
+  overallScore: number
+  includeTechnicalAssessment: boolean
+  technicalInterview: TechnicalInterview
+  technicalAssessment: TechnicalAssessment
+  rating: number | null
+  comment: string | null
+  createdAt: string
+  updatedAt: string
 }

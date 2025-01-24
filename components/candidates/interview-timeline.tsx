@@ -1,13 +1,33 @@
-'use client'
-
+import { formatLongDate } from '@/lib/utils'
 import { HiringStage } from '@/data/types/enums'
+
 import HiringStageSelect from '../hiring-stage-select'
 
-const InterviewTimeline = () => {
+interface InterviewTimelineProps {
+  invitedAt?: string
+  completedAt?: string
+  stage?: string
+  isUpdatingCandidate: boolean
+  handleStageUpdate: (stage: HiringStage) => Promise<void>
+}
+
+const InterviewTimeline = ({
+  invitedAt,
+  completedAt,
+  stage,
+  isUpdatingCandidate,
+  handleStageUpdate
+}: InterviewTimelineProps) => {
   return (
     <dl className='space-y-8 text-sm leading-5'>
-      <TimelineItem title='Invited' description='September 30th, 2024' />
-      <TimelineItem title='Completed' description='September 30th, 2024' />
+      <TimelineItem
+        title='Invited'
+        description={invitedAt ? formatLongDate(invitedAt) : '_'}
+      />
+      <TimelineItem
+        title='Completed'
+        description={completedAt ? formatLongDate(completedAt) : '_'}
+      />
       <TimelineItem
         title='Extra time breakdown'
         description='No extra time was granted to this candidate'
@@ -15,9 +35,12 @@ const InterviewTimeline = () => {
       <TimelineItem title='Source' description='Invitation by email' />
       <TimelineItem title='Hiring stage'>
         <HiringStageSelect
-          value={HiringStage.HIRED}
-          onValueChange={() => {}}
+          value={stage as HiringStage}
+          onValueChange={async newStage => {
+            await handleStageUpdate(newStage)
+          }}
           className='w-[calc(100%-1rem)]'
+          loading={isUpdatingCandidate}
         />
       </TimelineItem>
     </dl>

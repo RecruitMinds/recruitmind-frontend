@@ -1,23 +1,41 @@
-import { Download, HelpCircle, Mail, Star, UserX } from 'lucide-react'
+'use client'
+
+import { Download, HelpCircle, Mail, UserX } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useCandidateInterviewDetails } from '@/data/hooks/use-interview'
 
+import StarRating from '../star-rating'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
-import StarRating from '../star-rating'
 
-const InterviewHeader = () => {
+interface InterviewHeaderProps {
+  interviewId: string
+  candidateId: string
+}
+
+const InterviewHeader = ({
+  interviewId,
+  candidateId
+}: InterviewHeaderProps) => {
+  const { data } = useCandidateInterviewDetails(candidateId, interviewId, {
+    staleTime: Infinity,
+    enabled: false
+  })
+
   return (
     <CardTitle className='flex items-center justify-between'>
       <div className='flex flex-col items-start gap-2'>
         <div className='flex items-center gap-5 text-xl'>
           <strong>Interview</strong>
-          <span className='font-normal'>
-            .NET Developer - Sri Lanka - Remote
-          </span>
+          <span className='font-normal'>{data?.name || 'Interview Name'}</span>
         </div>
 
-        <StarRating initialRating={4} totalStars={5} readOnly={true} />
+        <StarRating
+          initialRating={data?.rating ?? 0}
+          totalStars={5}
+          readOnly={true}
+        />
       </div>
 
       <div className='flex items-center gap-2'>

@@ -225,9 +225,12 @@ export function useUpdateCandidateInterview() {
       }
     },
 
-    onSettled: (_, __, { interview }) => {
+    onSettled: (_, __, { interview, candidate }) => {
       queryClient.invalidateQueries({
         queryKey: ['interview-candidates', { interview }]
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['candidate-interview-details', candidate, interview]
       })
     }
   })
@@ -259,6 +262,19 @@ export function useInviteExistingCandidate() {
         queryKey: [...interviewKeys.all, 'paginated']
       })
     }
+  })
+}
+
+export function useCandidateInterviewDetails(
+  candidateId: string,
+  interviewId: string,
+  options = {}
+) {
+  return useQuery({
+    queryKey: ['candidate-interview-details', candidateId, interviewId],
+    queryFn: () =>
+      interviewService.getCandidateInterviewDetails(candidateId, interviewId),
+    ...options
   })
 }
 

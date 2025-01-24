@@ -1,17 +1,27 @@
+import type { TechnicalInterview } from '@/data/types/interview'
+
 import ScoreCard from './score-card'
 import TranscriptMessage from './transcript-message'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const TechnicalInterview = () => {
+interface TechnicalInterviewProps {
+  interview?: TechnicalInterview
+}
+
+const TechnicalInterview = ({ interview }: TechnicalInterviewProps) => {
+  const totalScore = interview?.totalScore ?? 0
+  const technicalSkillsScore = interview?.technicalSkillsScore ?? 0
+  const softSkillsScore = interview?.softSkillsScore ?? 0
+
   return (
     <>
       <h1 className='text-lg font-bold'>Technical Interview</h1>
       <div className='mt-4 space-y-6'>
         <div className='grid grid-cols-3 gap-4'>
-          <ScoreCard title='Total Score' score={85} />
-          <ScoreCard title='Technical Skills' score={82} />
-          <ScoreCard title='Soft Skills' score={88} />
+          <ScoreCard title='Total Score' score={totalScore} />
+          <ScoreCard title='Technical Skills' score={technicalSkillsScore} />
+          <ScoreCard title='Soft Skills' score={softSkillsScore} />
         </div>
 
         <Tabs defaultValue='evaluation' className='w-full'>
@@ -27,6 +37,16 @@ const TechnicalInterview = () => {
           <TabsContent value='evaluation' className='mt-6'>
             <ScrollArea className='flex h-full max-h-96 flex-col'>
               <div className='space-y-6'>
+                {interview?.questions?.map((question, index) => (
+                  <QuestionEvaluation
+                    key={index}
+                    question={question.question}
+                    answer={question.answer}
+                    evaluation={question.evaluation}
+                  />
+                ))}
+
+                {/* TODO: Remove Sample Question */}
                 <QuestionEvaluation
                   question='Explain JavaScript closures and their practical use cases.'
                   answer='A closure is a function that has access to variables in its outer scope even after the outer function has returned. They are commonly used for data privacy and maintaining state.'
@@ -39,6 +59,15 @@ const TechnicalInterview = () => {
           <TabsContent value='transcript' className='mt-6'>
             <ScrollArea className='flex h-full max-h-96 flex-col'>
               <div className='space-y-4'>
+                {interview?.transcript?.map((message, index) => (
+                  <TranscriptMessage
+                    key={index}
+                    role={message.role}
+                    content={message.content}
+                  />
+                ))}
+
+                {/* TODO: Remove Sample Transcript */}
                 <TranscriptMessage
                   role='AI Interviewer'
                   content='Can you explain what a closure is in JavaScript?'

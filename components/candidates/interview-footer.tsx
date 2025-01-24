@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
-import { useUpdateCandidateInterview } from '@/data/hooks/use-interview'
+import {
+  useCandidateInterviewDetails,
+  useUpdateCandidateInterview
+} from '@/data/hooks/use-interview'
 
 import StarRating from '@/components/star-rating'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,18 +14,19 @@ import { Textarea } from '@/components/ui/textarea'
 interface InterviewFooterProps {
   interviewId: string
   candidateId: string
-  initialRating?: number | null
-  initialComment?: string | null
 }
 
 const InterviewFooter = ({
   interviewId,
-  candidateId,
-  initialRating = 0,
-  initialComment = ''
+  candidateId
 }: InterviewFooterProps) => {
-  const [rating, setRating] = useState(initialRating || 0)
-  const [comment, setComment] = useState(initialComment || '')
+  const { data } = useCandidateInterviewDetails(candidateId, interviewId, {
+    staleTime: Infinity,
+    enabled: false
+  })
+
+  const [rating, setRating] = useState(data?.rating || 0)
+  const [comment, setComment] = useState(data?.comment || '')
 
   const { mutateAsync } = useUpdateCandidateInterview()
 
@@ -36,7 +40,7 @@ const InterviewFooter = ({
   }
 
   const handleCommentUpdate = useDebounceCallback(async (comment: string) => {
-    if (comment !== initialComment) {
+    if (comment !== data?.comment) {
       await mutateAsync({
         interview: interviewId,
         candidate: candidateId,
