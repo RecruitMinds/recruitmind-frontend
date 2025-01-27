@@ -6,6 +6,7 @@ import {
   SignedIn,
   SignedOut,
   SignInButton,
+  SignUpButton,
   UserButton
 } from '@clerk/nextjs'
 
@@ -79,14 +80,14 @@ const Header = () => {
             </SignedIn>
             <SignedOut>
               <div className='flex items-center gap-2'>
-                <SignInButton mode='modal'>
+                <SignInButton>
                   <Button variant='ghost' size='sm'>
                     Sign in
                   </Button>
                 </SignInButton>
-                <SignInButton mode='modal'>
+                <SignUpButton>
                   <Button size='sm'>Get Started</Button>
-                </SignInButton>
+                </SignUpButton>
               </div>
             </SignedOut>
           </ClerkLoaded>
