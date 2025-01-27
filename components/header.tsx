@@ -68,6 +68,8 @@ const Header = () => {
           <ClerkLoaded>
             <SignedIn>
               <UserButton
+                userProfileMode='navigation'
+                userProfileUrl='/profile'
                 appearance={{ elements: { userButtonAvatarBox: 'h-9 w-9' } }}
               />
             </SignedIn>

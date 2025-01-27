@@ -57,11 +57,13 @@ interface CountryProps {
 interface LocationSelectorProps {
   disabled?: boolean
   onCountryChange?: (country: CountryProps | null) => void
+  size?: 'sm' | 'lg'
 }
 
 const LocationSelector = ({
   disabled,
-  onCountryChange
+  onCountryChange,
+  size = 'lg'
 }: LocationSelectorProps) => {
   const [selectedCountry, setSelectedCountry] = useState<CountryProps | null>(
     null
@@ -80,7 +82,10 @@ const LocationSelector = ({
     <Popover open={openCountryDropdown} onOpenChange={setOpenCountryDropdown}>
       <PopoverTrigger
         asChild
-        className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'
+        className={cn(
+          'h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black',
+          size === 'sm' && 'h-10 max-w-xl'
+        )}
       >
         <Button
           variant='outline'
