@@ -289,6 +289,7 @@ const CreateInterviewPage = () => {
                           setCountryName(country?.name || '')
                           form.setValue(field.name, country?.name || '')
                         }}
+                        placeholder='Job role location'
                       />
                     </FormControl>
 

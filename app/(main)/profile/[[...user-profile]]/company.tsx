@@ -18,6 +18,7 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form'
+import { useUser } from '@clerk/nextjs'
 
 const formSchema = z.object({
   companyName: z
@@ -34,12 +35,14 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>
 
 const CompanyPage = () => {
+  const { user } = useUser()
+  console.log(user?.publicMetadata.companyName)
   const [preview, setPreview] = useState<string | null>(null)
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      companyName: '',
-      companyLocation: '',
+      companyName: (user?.publicMetadata?.companyName as string) || '',
+      companyLocation: (user?.publicMetadata?.location as string) || '',
       companyLogo: undefined
     }
   })
@@ -141,10 +144,12 @@ const CompanyPage = () => {
                     <FormItem>
                       <FormControl>
                         <LocationSelector
-                          size='sm'
+                          className='h-10 max-w-xl'
+                          defaultValue={form.getValues('companyLocation')}
                           onCountryChange={country => {
                             field.onChange(country?.name || '')
                           }}
+                          placeholder='Company Location'
                         />
                       </FormControl>
                       <FormMessage />

@@ -1,11 +1,18 @@
 'use client'
 
 import { Building2 } from 'lucide-react'
-import { UserProfile } from '@clerk/nextjs'
+import { UserProfile, useUser } from '@clerk/nextjs'
 
 import CompanyPage from './company'
+import Loading from '@/components/loading'
 
 const ProfilePage = () => {
+  const { isLoaded } = useUser()
+
+  if (!isLoaded) {
+    return <Loading />
+  }
+
   return (
     <div className='mt-16 pb-24'>
       <div className='container flex flex-col'>
