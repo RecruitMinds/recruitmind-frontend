@@ -2,8 +2,14 @@
 
 import { useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
+import type { InterviewList } from '@/data/types/interview'
+import {
+  useInvitableInterviews,
+  useInviteExistingCandidate
+} from '@/data/hooks/use-interview'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -20,24 +26,38 @@ import {
   CommandList
 } from '@/components/ui/command'
 
-const interviews = [
-  {
-    value: 'frontend-developer-remote',
-    label: 'Frontend Developer - Remote'
-  },
-  {
-    value: '.net-developer-sri-lanka-remote',
-    label: '.NET Developer - Sri Lanka - Remote'
-  },
-  {
-    value: 'full-stack-engineer-uk-remote',
-    label: 'Full Stack Engineer - UK Remote'
-  }
-]
+interface InterviewInviteProps {
+  candidateId: string
+}
 
-const InterviewInvite = () => {
+const InterviewInvite = ({ candidateId }: InterviewInviteProps) => {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+  const { data: interviews, isLoading } = useInvitableInterviews(candidateId, {
+    staleTime: Infinity,
+    enable: false
+  })
+  const { mutateAsync, isPending } = useInviteExistingCandidate()
+
+  const selectedInterview = interviews?.find(
+    interview => interview._id === value
+  )
+
+  const inviteInterview = async () => {
+    if (!value) return
+
+    await toast.promise(
+      mutateAsync({
+        interview: value,
+        candidate: candidateId
+      }),
+      {
+        loading: 'Sending interview invitation...',
+        success: 'Interview invitation sent successfully!',
+        error: 'Failed to send interview invitation'
+      }
+    )
+  }
 
   return (
     <div className='ml-auto flex items-center gap-10'>
@@ -46,14 +66,17 @@ const InterviewInvite = () => {
           <Button
             variant='outline'
             role='combobox'
+            disabled={isLoading}
             aria-expanded={open}
             className='h-12 w-60 justify-between rounded-[10px] border-muted-foreground bg-background text-xs focus-visible:ring-2 focus-visible:ring-black'
           >
-            <span className='w-full truncate text-start'>
-              {value
-                ? interviews.find(interview => interview.value === value)?.label
-                : 'Invite for an interview'}
-            </span>
+            {isLoading ? (
+              <span>Loading interviews...</span>
+            ) : (
+              <span className='w-full truncate text-start'>
+                {selectedInterview?.name || 'Invite for an interview'}
+              </span>
+            )}
             <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
@@ -63,21 +86,21 @@ const InterviewInvite = () => {
             <CommandList>
               <CommandEmpty>No interview found.</CommandEmpty>
               <CommandGroup>
-                {interviews.map(interview => (
+                {interviews?.map((interview: InterviewList) => (
                   <CommandItem
-                    key={interview.value}
-                    value={interview.value}
+                    key={interview._id}
+                    value={interview._id}
                     onSelect={currentValue => {
                       setValue(currentValue === value ? '' : currentValue)
                       setOpen(false)
                     }}
                     className='min-h-12 rounded-none'
                   >
-                    {interview.label}
+                    {interview.name}
                     <Check
                       className={cn(
                         'ml-auto size-4',
-                        value === interview.value ? 'opacity-100' : 'opacity-0'
+                        value === interview._id ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                   </CommandItem>
@@ -90,8 +113,13 @@ const InterviewInvite = () => {
 
       <Button
         size='rounded'
-        disabled={!value}
-        className={`${value ? '' : 'bg-accent text-accent-foreground'}`}
+        disabled={isLoading || !value || isPending}
+        onClick={inviteInterview}
+        className={cn(
+          value
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-accent text-accent-foreground'
+        )}
       >
         Invite
       </Button>

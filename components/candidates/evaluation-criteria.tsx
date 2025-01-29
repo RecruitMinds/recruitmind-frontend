@@ -6,75 +6,74 @@ import {
 } from '@/components/ui/accordion'
 import { Separator } from '@/components/ui/separator'
 
-const evaluationCriteria = [
-  {
-    name: 'Core JavaScript Knowledge',
-    score: 58,
-    description:
-      "Assesses the candidate's understanding of fundamental JavaScript concepts such as variables, data types, functions, closures, and the event loop.",
-    subCriteria: [
-      'Variables and scoping',
-      'Data types and coercion',
-      'Functions and closures',
-      'Prototypes and inheritance',
-      'Asynchronous JavaScript (Promises, async/await)'
-    ]
-  },
-  {
-    name: 'Problem-Solving Skills',
-    score: 17,
-    description:
-      "Evaluates the candidate's ability to solve algorithmic problems, optimize code, and handle edge cases using JavaScript.",
-    subCriteria: [
-      'Algorithm implementation',
-      'Code optimization',
-      'Debugging skills',
-      'Edge case handling',
-      'Time and space complexity analysis'
-    ]
-  },
-  {
-    name: 'Modern JavaScript Ecosystem',
-    score: 17,
-    description:
-      "Measures the candidate's familiarity with modern JavaScript tools, frameworks, and best practices.",
-    subCriteria: [
-      'ES6+ features',
-      'Node.js and npm',
-      'Babel and webpack',
-      'React, Vue, or Angular knowledge',
-      'Testing frameworks (Jest, Mocha)'
-    ]
-  },
-  {
-    name: 'Code Quality and Best Practices',
-    score: 20,
-    description:
-      "Assesses the candidate's ability to write clean, maintainable, and efficient JavaScript code.",
-    subCriteria: [
-      'Code readability and organization',
-      'Proper error handling',
-      'Performance considerations',
-      'Security best practices',
-      'Documentation and comments'
-    ]
-  },
-  {
-    name: 'Soft Skills and Collaboration',
-    score: 12,
-    description:
-      "Evaluates the candidate's communication skills, ability to explain technical concepts, and potential for team collaboration.",
-    subCriteria: [
-      'Clear communication of ideas',
-      'Ability to explain complex concepts',
-      'Receptiveness to feedback',
-      'Problem-solving approach',
-      'Team collaboration potential'
-    ]
-  }
-]
+interface EvaluationCriteria {
+  technicalKnowledge?: number | null
+  problemSolving?: number | null
+  softSkills?: number | null
+  hasTechnicalAssessment: boolean
+}
 
-const EvaluationCriteria = () => {
+const evaluationCriterias = ({
+  technicalKnowledge,
+  problemSolving,
+  softSkills,
+  hasTechnicalAssessment
+}: EvaluationCriteria) => {
+  const technicalScore = technicalKnowledge ?? 0
+  const problemSolvingScore = problemSolving ?? 0
+  const softSkillsScore = softSkills ?? 0
+
+  const baseCriteria = [
+    {
+      name: 'Core Technical Knowledge',
+      score: technicalScore,
+      description:
+        "Assesses the candidate's technical knowledge in core programming concepts.",
+      subCriteria: [
+        'Data structures',
+        'Algorithms',
+        'Object-oriented programming',
+        'Design patterns',
+        'Database management'
+      ]
+    },
+    {
+      name: 'Soft Skills and Collaboration',
+      score: softSkillsScore,
+      description:
+        "Evaluates the candidate's communication skills, ability to explain technical concepts, and potential for team collaboration.",
+      subCriteria: [
+        'Clear communication of ideas',
+        'Ability to explain complex concepts',
+        'Receptiveness to feedback',
+        'Problem-solving approach',
+        'Team collaboration potential'
+      ]
+    }
+  ]
+
+  if (hasTechnicalAssessment) {
+    baseCriteria.splice(1, 0, {
+      name: 'Problem-Solving Skills',
+      score: problemSolvingScore,
+      description:
+        "Evaluates the candidate's ability to solve algorithmic problems, optimize code.",
+      subCriteria: [
+        'Problem-solving approach',
+        'Code optimization',
+        'Algorithmic thinking',
+        'Code readability',
+        'Code structure'
+      ]
+    })
+  }
+
+  return baseCriteria
+}
+
+const EvaluationCriteria = (props: EvaluationCriteria) => {
+  const criterias = evaluationCriterias(props)
+
   return (
     <div className='mt-6 rounded-lg bg-secondary p-6'>
       <div className='mb-4 flex flex-col tracking-normal'>
@@ -89,7 +88,7 @@ const EvaluationCriteria = () => {
       </span>
 
       <Accordion type='single' collapsible className='space-y-3'>
-        {evaluationCriteria.map((criteria, i) => (
+        {criterias.map((criteria, i) => (
           <AccordionItem
             key={i}
             value={criteria.name}

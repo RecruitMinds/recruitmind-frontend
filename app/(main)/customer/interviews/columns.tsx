@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {
   Archive,
-  CalendarFold,
   ChevronRight,
   Copy,
   MoreVertical,
@@ -18,9 +17,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 
-import { Interview } from '@/types'
+import { formatDate, formatRelativeDate } from '@/lib/utils'
+import { Interview, InterviewProgress } from '@/data/types/interview'
 
-export const columns: ColumnDef<Interview>[] = [
+export const columns: ColumnDef<Interview & InterviewProgress>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
@@ -41,9 +41,10 @@ export const columns: ColumnDef<Interview>[] = [
     accessorKey: 'progress',
     header: 'Progress',
     cell: ({ row }) => {
-      const { completed, started, notStarted, disqualified } = row.getValue(
-        'progress'
-      ) as Interview['progress']
+      const completed = row.original.completed
+      const started = row.original.started
+      const notStarted = row.original.invited
+      const disqualified = row.original.disqualified
 
       const total = completed + started + notStarted + disqualified
       const completedPercentage = (completed / total) * 100
@@ -97,39 +98,25 @@ export const columns: ColumnDef<Interview>[] = [
     }
   },
   {
-    accessorKey: 'lastActivity',
+    accessorKey: 'updatedAt',
     header: 'Last activity',
-    cell: ({ row }) => <div>{row.getValue('lastActivity')}</div>,
-    meta: {
-      headerClasses: 'hidden lg:table-cell',
-      cellClasses: 'hidden lg:table-cell'
-    }
-  },
-  {
-    accessorKey: 'dateCreated',
-    header: 'Date created',
-    cell: ({ row }) => <div>{row.getValue('dateCreated')}</div>,
-    meta: {
-      headerClasses: 'hidden lg:table-cell',
-      cellClasses: 'hidden lg:table-cell'
-    }
-  },
-  {
-    accessorKey: 'dateExpires',
-    header: 'Expires',
     cell: ({ row }) => (
-      <div>
-        {row.getValue('dateExpires') === null
-          ? '_'
-          : row.getValue('dateExpires')}
-      </div>
+      <div>{formatRelativeDate(row.getValue('updatedAt'))}</div>
     ),
     meta: {
-      headerClasses: 'hidden xl:table-cell',
-      cellClasses: 'hidden xl:table-cell'
+      headerClasses: 'hidden lg:table-cell',
+      cellClasses: 'hidden lg:table-cell'
     }
   },
-
+  {
+    accessorKey: 'createdAt',
+    header: 'Date created',
+    cell: ({ row }) => <div>{formatDate(row.getValue('createdAt'))}</div>,
+    meta: {
+      headerClasses: 'hidden lg:table-cell',
+      cellClasses: 'hidden lg:table-cell'
+    }
+  },
   {
     id: 'actions',
     header: 'Actions',
@@ -164,10 +151,6 @@ export const columns: ColumnDef<Interview>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
                 <Archive className='size-4' /> Archive
-              </DropdownMenuItem>
-              <DropdownMenuItem className='h-12 gap-x-3 rounded-none px-4'>
-                <CalendarFold className='size-4' />
-                Set expiry date
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

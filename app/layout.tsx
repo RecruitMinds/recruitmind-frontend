@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './globals.css'
-import { ClerkProvider } from '@clerk/nextjs'
+
+import Providers from './providers'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata: Metadata = {
   title: 'RecruitMind',
@@ -14,10 +17,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider>
+    <Providers>
       <html lang='en' className='scroll-smooth'>
-        <body className='antialiased'>{children}</body>
+        <body className='antialiased'>
+          {children}
+          <Toaster />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </body>
       </html>
-    </ClerkProvider>
+    </Providers>
   )
 }

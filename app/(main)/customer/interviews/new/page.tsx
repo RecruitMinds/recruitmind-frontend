@@ -1,12 +1,20 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil, Timer } from 'lucide-react'
 import * as z from 'zod'
+
+import { useCreateInterview } from '@/data/hooks/use-interview'
+import { CreateInterview } from '@/data/types/interview'
+import {
+  InterviewStatus,
+  SkillLevel,
+  WorkArrangements
+} from '@/data/types/enums'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -30,50 +38,111 @@ import LocationSelector from '@/components/ui/location-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 
-const formSchema = z.object({
-  name: z.string(),
-  role: z.string(),
-  work_arrangment: z.string(),
-  location: z.string(),
-  description: z.string(),
-  is_include_technical_interview: z.boolean().optional(),
-  skillLevel: z.string()
-})
+const formSchema = z
+  .object({
+    name: z.string().min(1, 'Name is required'),
+    role: z.string().min(1, 'Job role is required'),
+    work_arrangment: z.enum(['remote', 'onsite', 'hybrid'], {
+      required_error: 'Work arrangement is required'
+    }),
+    location: z.string().min(1, 'Location is required'),
+    description: z.string().min(1, 'Description is required'),
+    includeTechnicalAssessment: z.boolean().default(false),
+    skillLevel: z.enum(['easy', 'medium', 'hard']).optional(),
+    status: z.enum(['active', 'inactive', 'archived'])
+  })
+  .refine(
+    data =>
+      !data.includeTechnicalAssessment ||
+      (data.includeTechnicalAssessment && data.skillLevel),
+    {
+      message: 'Difficulty is required when technical assessment is included',
+      path: ['skillLevel']
+    }
+  )
 
 const CreateInterviewPage = () => {
   const router = useRouter()
   const nameRef = useRef<HTMLInputElement>(null)
   const [isNameEditing, setIsNameEditing] = useState(false)
   const [countryName, setCountryName] = useState<string>('')
-  const [stateName, setStateName] = useState<string>('')
+  const [isNameManuallyEdited, setIsNameManuallyEdited] = useState(false)
+  const createInterview = useCreateInterview()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      name: 'Untitled interview'
+      name: 'Untitled interview',
+      role: '',
+      work_arrangment: undefined,
+      location: '',
+      description: '',
+      includeTechnicalAssessment: false,
+      skillLevel: undefined,
+      status: 'active'
     }
   })
 
+  const generateInterviewName = (
+    role: string,
+    location: string,
+    arrangement: string
+  ) => {
+    if (role || location || arrangement) {
+      const parts = [
+        role || 'Untitled',
+        location || '',
+        arrangement || ''
+      ].filter(Boolean)
+      return parts.join(' - ')
+    }
+    return 'Untitled interview'
+  }
+
+  useEffect(() => {
+    if (!isNameManuallyEdited) {
+      const role = form.watch('role')
+      const location = countryName
+      const arrangement = form.watch('work_arrangment')
+      const generatedName = generateInterviewName(role, location, arrangement)
+      form.setValue('name', generatedName)
+    }
+  }, [
+    form.watch('role'),
+    countryName,
+    form.watch('work_arrangment'),
+    isNameManuallyEdited
+  ])
+
   const enableNameEditing = () => {
     setIsNameEditing(true)
+    setIsNameManuallyEdited(true)
     setTimeout(() => {
       nameRef.current?.focus()
       nameRef.current?.select()
     })
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values)
-      toast(
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      )
+      const createInterviewData: CreateInterview = {
+        name: values.name,
+        role: values.role,
+        workArrangements: values.work_arrangment as WorkArrangements,
+        location: values.location,
+        description: values.description,
+        includeTechnicalAssessment: values.includeTechnicalAssessment,
+        skillLevel: values.skillLevel as SkillLevel | undefined,
+        status: values.status as InterviewStatus
+      }
+
+      await createInterview.mutateAsync(createInterviewData)
+      toast.success('Interview created successfully')
+      router.push('/customer/interviews')
     } catch (error) {
       console.error('Form submission error', error)
-      toast.error('Failed to submit the form. Please try again.')
+      toast.error('Failed to create interview. Please try again.')
     }
   }
 
@@ -155,7 +224,7 @@ const CreateInterviewPage = () => {
 
         {/* Form fields*/}
         <div className='container space-y-8'>
-          <div className='grid grid-cols-12 gap-4 pb-6'>
+          <div className='grid grid-cols-12 gap-6 gap-x-12 pb-6'>
             <div className='col-span-6'>
               <FormField
                 control={form.control}
@@ -190,13 +259,13 @@ const CreateInterviewPage = () => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'>
+                        <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black data-[placeholder]:text-muted-foreground'>
                           <SelectValue placeholder='work arrangment' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value='remote'>Remote</SelectItem>
-                        <SelectItem value='on-site'>On/Site</SelectItem>
+                        <SelectItem value='onsite'>On/Site</SelectItem>
                         <SelectItem value='hybrid'>Hybrid</SelectItem>
                       </SelectContent>
                     </Select>
@@ -220,6 +289,7 @@ const CreateInterviewPage = () => {
                           setCountryName(country?.name || '')
                           form.setValue(field.name, country?.name || '')
                         }}
+                        placeholder='Job role location'
                       />
                     </FormControl>
 
@@ -254,7 +324,7 @@ const CreateInterviewPage = () => {
             <div className='col-span-12'>
               <FormField
                 control={form.control}
-                name='is_include_technical_interview'
+                name='includeTechnicalAssessment'
                 render={({ field }) => (
                   <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
                     <div className='space-y-0.5'>
@@ -276,7 +346,7 @@ const CreateInterviewPage = () => {
             </div>
 
             <div className='col-span-12'>
-              {form.watch('is_include_technical_interview') && (
+              {form.watch('includeTechnicalAssessment') && (
                 <FormField
                   control={form.control}
                   name='skillLevel'
@@ -285,10 +355,10 @@ const CreateInterviewPage = () => {
                       <FormLabel>Difficulty</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={field.value || undefined}
                       >
                         <FormControl>
-                          <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'>
+                          <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black data-[placeholder]:text-muted-foreground'>
                             <SelectValue placeholder='difficulty' />
                           </SelectTrigger>
                         </FormControl>
@@ -307,7 +377,13 @@ const CreateInterviewPage = () => {
             </div>
 
             <div className='col-span-12 place-self-end'>
-              <Button type='submit'>Submit</Button>
+              <Button
+                type='submit'
+                disabled={createInterview.isPending}
+                size={'rounded'}
+              >
+                {createInterview.isPending ? 'Creating...' : 'Create Interview'}
+              </Button>
             </div>
           </div>
         </div>

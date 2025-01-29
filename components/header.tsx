@@ -13,6 +13,12 @@ import {
 } from '@/components/ui/sheet'
 import HeaderItem from './header-item'
 
+const BetaTag = () => (
+  <span className='ml-1 rounded-md bg-primary/10 px-1.5 py-0.5 align-top text-xs font-medium text-primary'>
+    Beta
+  </span>
+)
+
 const Header = () => {
   const pathName = usePathname()
   const isNewInterview = pathName.includes('/customer/interviews/new')
@@ -30,7 +36,10 @@ const Header = () => {
             <ul className='flex flex-col gap-3 text-sm'>
               <li className='text-2xl font-bold'>
                 <SheetClose asChild>
-                  <Link href='/'>RecruitMind</Link>
+                  <Link href='/'>
+                    RecruitMind
+                    <BetaTag />
+                  </Link>
                 </SheetClose>
               </li>
             </ul>
@@ -43,6 +52,7 @@ const Header = () => {
             className='text-2xl font-bold leading-tight tracking-tight'
           >
             RecruitMind
+            <BetaTag />
           </Link>
 
           <ul className='flex items-center gap-0.5 text-sm tracking-tight'>
@@ -58,6 +68,8 @@ const Header = () => {
           <ClerkLoaded>
             <SignedIn>
               <UserButton
+                userProfileMode='navigation'
+                userProfileUrl='/profile'
                 appearance={{ elements: { userButtonAvatarBox: 'h-9 w-9' } }}
               />
             </SignedIn>

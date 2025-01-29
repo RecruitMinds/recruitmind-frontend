@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import {
@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 
 // Import JSON data directly
 import countries from '@/data/countries.json'
+import { CaretSortIcon } from '@radix-ui/react-icons'
 
 interface Timezone {
   zoneName: string
@@ -57,19 +58,27 @@ interface CountryProps {
 interface LocationSelectorProps {
   disabled?: boolean
   onCountryChange?: (country: CountryProps | null) => void
+  placeholder: string
+  defaultValue?: string | null
+  className?: string
 }
 
 const LocationSelector = ({
   disabled,
-  onCountryChange
+  onCountryChange,
+  placeholder,
+  defaultValue,
+  className
 }: LocationSelectorProps) => {
-  const [selectedCountry, setSelectedCountry] = useState<CountryProps | null>(
-    null
-  )
-  const [openCountryDropdown, setOpenCountryDropdown] = useState(false)
-
   // Cast imported JSON data to their respective types
   const countriesData = countries as CountryProps[]
+
+  const [selectedCountry, setSelectedCountry] = useState<CountryProps | null>(
+    defaultValue
+      ? (countriesData.find(c => c.name === defaultValue) as CountryProps)
+      : null
+  )
+  const [openCountryDropdown, setOpenCountryDropdown] = useState(false)
 
   const handleCountrySelect = (country: CountryProps | null) => {
     setSelectedCountry(country)
@@ -80,7 +89,10 @@ const LocationSelector = ({
     <Popover open={openCountryDropdown} onOpenChange={setOpenCountryDropdown}>
       <PopoverTrigger
         asChild
-        className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'
+        className={cn(
+          'h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black',
+          className
+        )}
       >
         <Button
           variant='outline'
@@ -95,9 +107,9 @@ const LocationSelector = ({
               <span>{selectedCountry.name}</span>
             </div>
           ) : (
-            <span className='text-muted-foreground'>Job role location</span>
+            <span className='text-muted-foreground'>{placeholder}</span>
           )}
-          <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
+          <CaretSortIcon className='h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0'>
