@@ -75,7 +75,7 @@ export interface TechnicalInterview {
 
 export interface TechnicalAssessment {
   totalScore: number | null
-  questions?: {
+  question?: {
     question: {
       title: string
       description: string
@@ -84,7 +84,7 @@ export interface TechnicalAssessment {
     }
     solution: string
     evaluation: string
-  }[]
+  } | null
   transcript?: Transcript
 }
 
