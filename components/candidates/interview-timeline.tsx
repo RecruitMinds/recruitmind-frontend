@@ -1,5 +1,5 @@
 import { formatLongDate } from '@/lib/utils'
-import { HiringStage } from '@/data/types/enums'
+import { CandidateInterviewStatus, HiringStage } from '@/data/types/enums'
 
 import HiringStageSelect from '../hiring-stage-select'
 
@@ -7,6 +7,8 @@ interface InterviewTimelineProps {
   invitedAt?: string
   completedAt?: string
   stage?: string
+  status?: CandidateInterviewStatus
+  includeTechnicalAssessment?: boolean
   isUpdatingCandidate: boolean
   handleStageUpdate: (stage: HiringStage) => Promise<void>
 }
@@ -15,22 +17,32 @@ const InterviewTimeline = ({
   invitedAt,
   completedAt,
   stage,
+  status,
+  includeTechnicalAssessment,
   isUpdatingCandidate,
   handleStageUpdate
 }: InterviewTimelineProps) => {
+  const isInterviewCompleted = status === CandidateInterviewStatus.COMPLETED
+
   return (
     <dl className='space-y-8 text-sm leading-5'>
       <TimelineItem
         title='Invited'
         description={invitedAt ? formatLongDate(invitedAt) : '_'}
       />
+      {isInterviewCompleted && (
+        <TimelineItem
+          title='Completed'
+          description={completedAt ? formatLongDate(completedAt) : '_'}
+        />
+      )}
       <TimelineItem
-        title='Completed'
-        description={completedAt ? formatLongDate(completedAt) : '_'}
-      />
-      <TimelineItem
-        title='Extra time breakdown'
-        description='No extra time was granted to this candidate'
+        title='Interview format'
+        description={
+          includeTechnicalAssessment
+            ? 'Technical interview and coding assessment'
+            : 'Technical interview only'
+        }
       />
       <TimelineItem title='Source' description='Invitation by email' />
       <TimelineItem title='Hiring stage'>

@@ -7,9 +7,19 @@ import {
   Video
 } from 'lucide-react'
 
+import { cn } from '@/lib/utils'
+import { CandidateInterviewStatus } from '@/data/types/enums'
+
 import { Separator } from '@/components/ui/separator'
 
-const AntiCheatingMonitor = () => {
+interface AntiCheatingMonitorProps {
+  interviewStatus?: CandidateInterviewStatus
+}
+
+const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
+  const isInterviewCompleted =
+    interviewStatus === CandidateInterviewStatus.COMPLETED
+
   return (
     <>
       <div className='mb-3 flex items-center justify-between py-2.5 text-sm'>
@@ -25,7 +35,11 @@ const AntiCheatingMonitor = () => {
             <MonitorSmartphone className='size-4' />
             <span>Device used</span>
           </div>
-          <span className='font-bold'>Desktop</span>
+          {isInterviewCompleted ? (
+            <span className='font-bold'>Desktop</span>
+          ) : (
+            <span>N/A</span>
+          )}
         </div>
 
         <div className='flex items-center justify-between text-sm'>
@@ -33,7 +47,11 @@ const AntiCheatingMonitor = () => {
             <MapPin className='size-4' />
             <span>Location</span>
           </div>
-          <span className='font-bold'>Colombo (1), LK</span>
+          {isInterviewCompleted ? (
+            <span className='font-bold'>Colombo (1), LK</span>
+          ) : (
+            <span>N/A</span>
+          )}
         </div>
         <Separator className='my-2.5' />
       </div>
@@ -43,18 +61,22 @@ const AntiCheatingMonitor = () => {
           {
             label: 'Filled out only once from IP address?',
             Icon: Globe,
-            value: 'Yes'
+            value: isInterviewCompleted ? 'Yes' : 'N/A'
           },
-          { label: 'Webcam enabled?', Icon: Video, value: 'Yes' },
+          {
+            label: 'Webcam enabled?',
+            Icon: Video,
+            value: isInterviewCompleted ? 'Yes' : 'N/A'
+          },
           {
             label: 'Full-screen mode always active?',
             Icon: Maximize,
-            value: 'No'
+            value: isInterviewCompleted ? 'No' : 'N/A'
           },
           {
             label: 'Mouse always in assessment window?',
             Icon: Mouse,
-            value: 'Yes'
+            value: isInterviewCompleted ? 'Yes' : 'N/A'
           }
         ].map(({ label, Icon, value }, index) => (
           <div
@@ -66,7 +88,11 @@ const AntiCheatingMonitor = () => {
               <span>{label}</span>
             </div>
             <span
-              className={`flex h-6 items-center justify-center rounded-full px-2 text-xs ${value === 'No' ? 'bg-red-300' : 'bg-lime-400'}`}
+              className={cn(
+                'flex h-6 items-center justify-center rounded-full px-2 text-xs',
+                value === 'No' ? 'bg-red-300' : 'bg-lime-400',
+                value === 'N/A' && '!-mr-2 bg-transparent text-sm'
+              )}
             >
               {value}
             </span>
@@ -74,9 +100,11 @@ const AntiCheatingMonitor = () => {
         ))}
       </div>
 
-      <div className='relative aspect-video bg-accent'>
-        {/* Placeholder for video player */}
-      </div>
+      {isInterviewCompleted && (
+        <div className='relative aspect-video bg-accent'>
+          {/* Placeholder for video player */}
+        </div>
+      )}
     </>
   )
 }

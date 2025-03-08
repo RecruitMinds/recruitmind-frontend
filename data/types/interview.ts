@@ -91,8 +91,8 @@ export interface TechnicalAssessment {
 export interface CandidateInterviewDetail {
   _id: string
   name: string
-  status: string
-  stage: string
+  status: CandidateInterviewStatus
+  stage: HiringStage
   bestScore: number
   overallScore: number
   includeTechnicalAssessment: boolean

@@ -3,6 +3,7 @@
 import { Download, HelpCircle, Mail, UserX } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { CandidateInterviewStatus } from '@/data/types/enums'
 import { useCandidateInterviewDetails } from '@/data/hooks/use-interview'
 
 import StarRating from '../star-rating'
@@ -23,6 +24,9 @@ const InterviewHeader = ({
     enabled: false
   })
 
+  const isInterviewCompleted =
+    data?.status === CandidateInterviewStatus.COMPLETED
+
   return (
     <CardTitle className='flex items-center justify-between'>
       <div className='flex flex-col items-start gap-2'>
@@ -38,25 +42,27 @@ const InterviewHeader = ({
         />
       </div>
 
-      <div className='flex items-center gap-2'>
-        {[HelpCircle, Download, Mail, UserX].map((Icon, i) => (
-          <Button
-            key={i}
-            variant='outline'
-            size='rounded'
-            className='group/icon border-accent-foreground px-3.5'
-          >
-            <Icon
-              className={cn(
-                'size-5 stroke-2',
-                (i == 0 || i == 2) &&
-                  'group-hover/icon:fill-current group-hover/icon:stroke-white',
-                i == 3 && 'group-hover/icon:fill-current'
-              )}
-            />
-          </Button>
-        ))}
-      </div>
+      {isInterviewCompleted && (
+        <div className='flex items-center gap-2'>
+          {[HelpCircle, Download, Mail, UserX].map((Icon, i) => (
+            <Button
+              key={i}
+              variant='outline'
+              size='rounded'
+              className='group/icon border-accent-foreground px-3.5'
+            >
+              <Icon
+                className={cn(
+                  'size-5 stroke-2',
+                  (i == 0 || i == 2) &&
+                    'group-hover/icon:fill-current group-hover/icon:stroke-white',
+                  i == 3 && 'group-hover/icon:fill-current'
+                )}
+              />
+            </Button>
+          ))}
+        </div>
+      )}
     </CardTitle>
   )
 }
