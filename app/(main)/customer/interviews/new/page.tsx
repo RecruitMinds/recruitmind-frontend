@@ -224,8 +224,8 @@ const CreateInterviewPage = () => {
 
         {/* Form fields*/}
         <div className='container space-y-8'>
-          <div className='grid grid-cols-12 gap-6 gap-x-12 pb-6'>
-            <div className='col-span-6'>
+          <div className='grid grid-cols-12 gap-6 pb-6 md:gap-x-12'>
+            <div className='col-span-12 md:col-span-6'>
               <FormField
                 control={form.control}
                 name='role'
@@ -247,7 +247,7 @@ const CreateInterviewPage = () => {
               />
             </div>
 
-            <div className='col-span-6'>
+            <div className='col-span-12 md:col-span-6'>
               <FormField
                 control={form.control}
                 name='work_arrangment'
