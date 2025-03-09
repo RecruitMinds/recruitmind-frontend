@@ -11,6 +11,7 @@ interface TechnicalAssessmentProps {
 
 const TechnicalAssessment = ({ assessment }: TechnicalAssessmentProps) => {
   const totalScore = assessment?.totalScore ?? 0
+  const question = assessment?.question
 
   return (
     <>
@@ -33,15 +34,14 @@ const TechnicalAssessment = ({ assessment }: TechnicalAssessmentProps) => {
           <TabsContent value='challenges' className='mt-6'>
             <ScrollArea className='flex h-full max-h-96 flex-col'>
               <div className='space-y-6'>
-                {assessment?.questions?.map((question, index) => (
+                {question && (
                   <CodingChallenge
-                    key={index}
                     title={question.question.title}
                     description={question.question.description}
                     solution={question.solution}
                     evaluation={question.evaluation}
                   />
-                ))}
+                )}
 
                 {/* TODO: Remove Sample Coding Challenge */}
                 <CodingChallenge

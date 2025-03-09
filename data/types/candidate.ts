@@ -19,7 +19,7 @@ export interface CandidateList {
   stage: HiringStage
   overallScore: number | null
   technicalInterview: Omit<TechnicalInterview, 'questions' | 'transcript'>
-  technicalAssessment: Omit<TechnicalAssessment, 'questions' | 'transcript'>
+  technicalAssessment: Omit<TechnicalAssessment, 'question' | 'transcript'>
   invitationToken: string
   rating: number | null
   comment: string | null
