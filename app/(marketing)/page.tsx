@@ -81,7 +81,7 @@ const MarketingPage = () => {
   return (
     <div className='bg-white'>
       {/* Hero Section */}
-      <section className='relative flex min-h-screen items-center justify-center overflow-hidden'>
+      <section className='relative flex min-h-screen items-center justify-center overflow-hidden py-12 md:py-0'>
         <div className='container z-10 px-4 sm:px-6 lg:px-8'>
           <div className='mx-auto max-w-4xl text-center'>
             <InView
@@ -92,7 +92,7 @@ const MarketingPage = () => {
               transition={{ duration: 0.6 }}
               viewOptions={{ once: true }}
             >
-              <span className='mb-6 inline-block rounded-full bg-primary/10 px-5 py-2 text-sm font-medium text-primary shadow-sm transition-all duration-300 hover:bg-primary/15'>
+              <span className='mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary shadow-sm transition-all duration-300 hover:bg-primary/15 md:mb-6 md:px-5 md:py-2 md:text-sm'>
                 Next-Gen Technical Interview Platform
               </span>
             </InView>
@@ -104,7 +104,7 @@ const MarketingPage = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               viewOptions={{ once: true }}
             >
-              <h1 className='mb-8 text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:text-7xl'>
+              <h1 className='mb-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl md:mb-8 md:text-5xl lg:text-7xl'>
                 <TextEffect
                   preset='fade-in-blur'
                   per='word'
@@ -114,7 +114,7 @@ const MarketingPage = () => {
                 >
                   Transform Your Technical Interviews with
                 </TextEffect>
-                <span className='relative mx-2 inline-block bg-gradient-to-r from-primary to-blue-600 bg-clip-text px-3 text-transparent after:absolute after:bottom-0 after:left-0 after:h-[6px] after:w-full after:rounded-full after:bg-gradient-to-r after:from-primary/30 after:to-blue-600/30 after:content-[""]'>
+                <span className='relative mx-1 inline-block bg-gradient-to-r from-primary to-blue-600 bg-clip-text px-2 text-transparent after:absolute after:bottom-0 after:left-0 after:h-[4px] after:w-full after:rounded-full after:bg-gradient-to-r after:from-primary/30 after:to-blue-600/30 after:content-[""] md:mx-2 md:px-3 md:after:h-[6px]'>
                   <span className='font-bold'>AI-Powered</span>
                 </span>
                 <TextEffect
@@ -137,7 +137,7 @@ const MarketingPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               viewOptions={{ once: true }}
             >
-              <p className='mb-12 text-xl text-gray-600 sm:text-2xl'>
+              <p className='mb-8 text-base text-gray-600 sm:text-lg md:mb-12 md:text-xl'>
                 <TextEffect
                   per='word'
                   preset='fade'
@@ -159,21 +159,22 @@ const MarketingPage = () => {
               transition={{ duration: 0.6, delay: 0.6 }}
               viewOptions={{ once: true }}
             >
-              <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                <Link href='/customer/interviews'>
+              <div className='flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4'>
+                <Link href='/customer/interviews' className='w-full sm:w-auto'>
                   <Button
                     variant='default'
                     size='rounded'
-                    className='gap-2 px-8 py-6 text-lg shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg'
+                    className='w-full gap-2 px-6 py-5 text-base shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg sm:w-auto md:px-8 md:py-6 md:text-lg'
                   >
-                    Try It Free <ArrowRight className='h-5 w-5 animate-pulse' />
+                    Try It Free{' '}
+                    <ArrowRight className='h-4 w-4 animate-pulse md:h-5 md:w-5' />
                   </Button>
                 </Link>
-                <Link href='#how-it-works'>
+                <Link href='#how-it-works' className='w-full sm:w-auto'>
                   <Button
                     size='rounded'
                     variant='secondary'
-                    className='px-8 py-6 text-lg transition-all duration-300 hover:bg-gray-100'
+                    className='w-full px-6 py-5 text-base transition-all duration-300 hover:bg-gray-100 sm:w-auto md:px-8 md:py-6 md:text-lg'
                   >
                     See How It Works
                   </Button>
@@ -184,12 +185,12 @@ const MarketingPage = () => {
         </div>
 
         <div className='absolute inset-0 z-0 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]' />
-        <div className='absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]' />
-        <div className='absolute bottom-8 left-0 right-0 flex justify-center'>
-          <div className='animate-bounce rounded-full bg-white p-2 shadow-md'>
+        <div className='absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:12px_12px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] sm:[background-size:16px_16px]' />
+        <div className='absolute bottom-4 left-0 right-0 flex justify-center md:bottom-8'>
+          <div className='animate-bounce rounded-full bg-white p-1.5 shadow-md md:p-2'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6 text-primary'
+              className='h-5 w-5 text-primary md:h-6 md:w-6'
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
@@ -433,11 +434,11 @@ const MarketingPage = () => {
               transition={{ duration: 0.5, delay: 0.1 * index }}
               viewOptions={{ once: true }}
             >
-              <div className='group rounded-xl border bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'>
-                <div className='mb-6 inline-flex rounded-xl bg-primary/10 p-4 transition-all duration-300 group-hover:bg-primary/20'>
+              <div className='group h-full rounded-xl border bg-gradient-to-br from-white to-blue-50/50 p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:from-blue-50/80 hover:to-indigo-50/80 hover:shadow-xl'>
+                <div className='mb-6 inline-flex rounded-xl bg-primary/10 p-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20'>
                   <feature.icon className='h-8 w-8 text-primary' />
                 </div>
-                <h3 className='mb-4 text-xl font-semibold group-hover:text-primary'>
+                <h3 className='mb-4 text-xl font-semibold text-gray-900 transition-all duration-300 group-hover:text-primary'>
                   {feature.title}
                 </h3>
                 <p className='text-gray-600'>{feature.description}</p>
@@ -448,7 +449,7 @@ const MarketingPage = () => {
       </section>
 
       {/* Benefits section */}
-      <section className='bg-gray-50 py-28'>
+      <section className='bg-gradient-to-b from-gray-50 to-gray-100/80 py-28'>
         <div className='container px-4 sm:px-6 lg:px-8'>
           <div className='mx-auto max-w-3xl text-center'>
             <InView
@@ -459,7 +460,7 @@ const MarketingPage = () => {
               transition={{ duration: 0.6 }}
               viewOptions={{ once: true }}
             >
-              <span className='mb-6 inline-block rounded-full bg-primary/10 px-5 py-2 text-sm font-medium text-primary shadow-sm transition-all duration-300 hover:bg-primary/15'>
+              <span className='mb-6 inline-block rounded-full bg-gradient-to-r from-primary/10 to-blue-500/10 px-5 py-2 text-sm font-medium text-primary shadow-sm transition-all duration-300 hover:from-primary/20 hover:to-blue-500/20'>
                 Key Benefits
               </span>
             </InView>
@@ -495,8 +496,8 @@ const MarketingPage = () => {
                 transition={{ duration: 0.5, delay: 0.1 * index }}
                 viewOptions={{ once: true }}
               >
-                <div className='group flex gap-5 rounded-xl bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'>
-                  <CheckCircle className='h-7 w-7 shrink-0 text-primary transition-all duration-300 group-hover:scale-110' />
+                <div className='group flex h-full gap-5 rounded-xl bg-gradient-to-br from-white to-purple-50/30 p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:from-white hover:to-purple-50/70 hover:shadow-lg'>
+                  <CheckCircle className='h-7 w-7 shrink-0 text-primary transition-all duration-300 group-hover:scale-110 group-hover:text-blue-600' />
                   <div>
                     <h3 className='mb-3 text-xl font-semibold'>
                       {benefit.title}
