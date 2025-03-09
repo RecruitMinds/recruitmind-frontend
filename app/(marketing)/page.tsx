@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { InView } from '@/components/core/in-view'
 import { TextEffect } from '@/components/core/text-effect'
+import { cn } from '@/lib/utils'
 
 const features = [
   {
@@ -255,126 +256,121 @@ const MarketingPage = () => {
               </p>
             </InView>
           </div>
-          <div className='grid gap-12 md:grid-cols-2'>
-            <div className='flex flex-col justify-center space-y-8'>
-              <InView
-                variants={{
-                  hidden: { opacity: 0, x: -30 },
-                  visible: { opacity: 1, x: 0 }
-                }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                viewOptions={{ once: true }}
-              >
-                <div className='group flex items-start gap-5 transition-all duration-300 hover:translate-x-1'>
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5 transition-all duration-300 group-hover:bg-primary group-hover:text-white'>
-                    1
-                  </div>
-                  <div>
-                    <h3 className='mb-3 text-xl font-semibold'>
-                      Set Up Interview Parameters
-                    </h3>
-                    <p className='text-gray-600'>
-                      Choose skills to assess, difficulty level, and interview
-                      duration
-                    </p>
-                  </div>
+
+          <div className='mx-auto grid w-full max-w-7xl grid-cols-1 gap-4 lg:grid-cols-3'>
+            <InView
+              className='col-span-1'
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              viewOptions={{ once: true }}
+            >
+              <StepCard containerClassName='h-full bg-gradient-to-br from-blue-50 to-indigo-100 hover:shadow-lg transition-all duration-300'>
+                <div className='absolute top-6 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white'>
+                  <span className='text-xl font-bold'>1</span>
                 </div>
-              </InView>
-              <InView
-                variants={{
-                  hidden: { opacity: 0, x: -30 },
-                  visible: { opacity: 1, x: 0 }
-                }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                viewOptions={{ once: true }}
-              >
-                <div className='group flex items-start gap-5 transition-all duration-300 hover:translate-x-1'>
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5 transition-all duration-300 group-hover:bg-primary group-hover:text-white'>
-                    2
-                  </div>
-                  <div>
-                    <h3 className='mb-3 text-xl font-semibold'>
+                <h2 className='mt-8 max-w-80 text-balance text-left text-base font-semibold tracking-[-0.015em] text-gray-900 md:text-xl lg:text-3xl'>
+                  Set Up Interview Parameters
+                </h2>
+                <p className='mt-4 max-w-[26rem] text-left text-base/6 text-gray-600'>
+                  Choose skills to assess, difficulty level, and interview
+                  duration
+                </p>
+              </StepCard>
+            </InView>
+
+            <InView
+              className='col-span-1 lg:col-span-2'
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              viewOptions={{ once: true }}
+            >
+              <StepCard containerClassName='h-full bg-gradient-to-br from-purple-50 to-pink-100 hover:shadow-lg transition-all duration-300'>
+                <div className='absolute top-6 flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 text-white'>
+                  <span className='text-xl font-bold'>2</span>
+                </div>
+                <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-0'>
+                  <div className='max-w-xs'>
+                    <h2 className='mt-8 text-balance text-left text-base font-semibold tracking-[-0.015em] text-gray-900 md:text-xl lg:text-3xl'>
                       Candidate Takes Interview
-                    </h3>
-                    <p className='text-gray-600'>
+                    </h2>
+                    <p className='mt-4 text-left text-base/6 text-gray-600'>
                       AI bot conducts interview, adapting questions based on
                       responses
                     </p>
                   </div>
+
+                  <Image
+                    src='/images/interview_ui.jpg'
+                    width={500}
+                    height={500}
+                    alt='interview image'
+                    className='hidden rounded-2xl object-contain shadow-md md:block'
+                  />
                 </div>
-              </InView>
-              <InView
-                variants={{
-                  hidden: { opacity: 0, x: -30 },
-                  visible: { opacity: 1, x: 0 }
-                }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                viewOptions={{ once: true }}
-              >
-                <div className='group flex items-start gap-5 transition-all duration-300 hover:translate-x-1'>
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5 transition-all duration-300 group-hover:bg-primary group-hover:text-white'>
-                    3
-                  </div>
-                  <div>
-                    <h3 className='mb-3 text-xl font-semibold'>
+              </StepCard>
+            </InView>
+
+            <InView
+              className='col-span-1 lg:col-span-2'
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              viewOptions={{ once: true }}
+            >
+              <StepCard containerClassName='h-full bg-gradient-to-br from-green-50 to-teal-100 hover:shadow-lg transition-all duration-300'>
+                <div className='absolute top-6 flex h-12 w-12 items-center justify-center rounded-full bg-teal-600 text-white'>
+                  <span className='text-xl font-bold'>3</span>
+                </div>
+                <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-0'>
+                  <div className='max-w-xs'>
+                    <h2 className='mt-8 text-balance text-left text-base font-semibold tracking-[-0.015em] text-gray-900 md:text-xl lg:text-3xl'>
                       Real-time Coding Assessment
-                    </h3>
-                    <p className='text-gray-600'>
+                    </h2>
+                    <p className='mt-4 text-left text-base/6 text-gray-600'>
                       Evaluate practical skills with coding challenges and live
                       analysis
                     </p>
                   </div>
-                </div>
-              </InView>
-              <InView
-                variants={{
-                  hidden: { opacity: 0, x: -30 },
-                  visible: { opacity: 1, x: 0 }
-                }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                viewOptions={{ once: true }}
-              >
-                <div className='group flex items-start gap-5 transition-all duration-300 hover:translate-x-1'>
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-primary/5 transition-all duration-300 group-hover:bg-primary group-hover:text-white'>
-                    4
-                  </div>
-                  <div>
-                    <h3 className='mb-3 text-xl font-semibold'>
-                      Comprehensive Reports
-                    </h3>
-                    <p className='text-gray-600'>
-                      Receive detailed insights on candidate performance and
-                      skill proficiency
-                    </p>
-                  </div>
-                </div>
-              </InView>
-            </div>
-            {/* Enhanced placeholder for an illustration/screenshot */}
-            <InView
-              variants={{
-                hidden: { opacity: 0, scale: 0.9 },
-                visible: { opacity: 1, scale: 1 }
-              }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              viewOptions={{ once: true }}
-            >
-              <div className='relative rounded-xl bg-gray-50 p-6 shadow-lg transition-all duration-500 hover:shadow-xl'>
-                <div className='relative aspect-video overflow-hidden rounded-lg bg-white shadow-md'>
-                  <Image
-                    src='/images/interview_ui.jpg'
-                    alt='Interview UI'
-                    fill
-                    className='object-fill'
-                  />
                   <Image
                     src='/images/assessment_ui.png'
-                    alt='Interview UI'
-                    fill
-                    className='object-fill'
+                    width={500}
+                    height={500}
+                    alt='linear demo image'
+                    className='hidden rounded-2xl object-contain shadow-md md:block'
                   />
                 </div>
-              </div>
+              </StepCard>
+            </InView>
+
+            <InView
+              className='col-span-1'
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.95 },
+                visible: { opacity: 1, y: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.7, delay: 0.7 }}
+              viewOptions={{ once: true }}
+            >
+              <StepCard containerClassName='h-full bg-gradient-to-br from-amber-50 to-orange-100 hover:shadow-lg transition-all duration-300'>
+                <div className='absolute top-6 flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 text-white'>
+                  <span className='text-xl font-bold'>4</span>
+                </div>
+                <h2 className='mt-8 max-w-80 text-balance text-left text-base font-semibold tracking-[-0.015em] text-gray-900 md:text-xl lg:text-3xl'>
+                  Comprehensive Reports
+                </h2>
+                <p className='mt-4 max-w-[26rem] text-left text-base/6 text-gray-600'>
+                  Receive detailed insights on candidate performance and skill
+                  proficiency
+                </p>
+              </StepCard>
             </InView>
           </div>
         </div>
@@ -627,6 +623,40 @@ const MarketingPage = () => {
         </div>
       </section>
     </div>
+  )
+}
+
+const StepCard = ({
+  children,
+  containerClassName,
+  className
+}: {
+  children: React.ReactNode
+  containerClassName?: string
+  className?: string
+}) => {
+  return (
+    <section
+      style={{
+        transition: 'transform 0.1s ease-out'
+      }}
+      className={cn(
+        'relative mx-auto w-full overflow-hidden rounded-2xl border border-gray-200 bg-white',
+        containerClassName
+      )}
+    >
+      <div
+        className='relative h-full overflow-hidden sm:mx-0 sm:rounded-2xl'
+        style={{
+          boxShadow:
+            '0 10px 32px rgba(34, 42, 53, 0.08), 0 1px 1px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(34, 42, 53, 0.02), 0 4px 6px rgba(34, 42, 53, 0.05), 0 24px 108px rgba(47, 48, 55, 0.06)'
+        }}
+      >
+        <div className={cn('h-full px-4 py-20 pb-16 sm:px-10', className)}>
+          {children}
+        </div>
+      </div>
+    </section>
   )
 }
 
