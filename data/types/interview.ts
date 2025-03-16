@@ -32,7 +32,8 @@ export interface Interview {
 
 export interface CreateInterview {
   name: string
-  description: string
+  skills: string[]
+  experience: string
   role: string
   location: string
   workArrangements: WorkArrangements
