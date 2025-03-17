@@ -72,6 +72,11 @@ export interface TechnicalInterview {
     evaluation: string
   }[]
   transcript?: Transcript
+  skillsEvaluation?: {
+    skill: string
+    evaluation: string
+    score: string
+  }[]
 }
 
 export interface TechnicalAssessment {

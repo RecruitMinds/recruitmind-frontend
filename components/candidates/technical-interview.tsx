@@ -25,12 +25,15 @@ const TechnicalInterview = ({ interview }: TechnicalInterviewProps) => {
         </div>
 
         <Tabs defaultValue='evaluation' className='w-full'>
-          <TabsList className='grid h-11 w-full grid-cols-2 rounded-[10px]'>
+          <TabsList className='grid h-11 w-full grid-cols-3 rounded-[10px]'>
             <TabsTrigger value='evaluation' className='rounded-[10px] py-2'>
               Questions & Evaluations
             </TabsTrigger>
             <TabsTrigger value='transcript' className='rounded-[10px] py-2'>
-              Interview Transcript
+              Transcript
+            </TabsTrigger>
+            <TabsTrigger value='skills' className='rounded-[10px] py-2'>
+              Skills
             </TabsTrigger>
           </TabsList>
 
@@ -79,6 +82,21 @@ const TechnicalInterview = ({ interview }: TechnicalInterviewProps) => {
               </div>
             </ScrollArea>
           </TabsContent>
+
+          <TabsContent value='skills' className='mt-6'>
+            <ScrollArea className='flex h-full max-h-96 flex-col'>
+              <div className='space-y-4'>
+                {interview?.skillsEvaluation?.map((skill, index) => (
+                  <SkillEvaluation
+                    key={index}
+                    skill={skill.skill}
+                    evaluation={skill.evaluation}
+                    score={skill.score}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </TabsContent>
         </Tabs>
       </div>
     </>
@@ -100,5 +118,34 @@ const QuestionEvaluation = ({
     <p className='text-sm italic text-primary'>{evaluation}</p>
   </div>
 )
+
+const SkillEvaluation = ({
+  skill,
+  evaluation,
+  score
+}: {
+  skill: string
+  evaluation: string
+  score: string
+}) => {
+  const scoreNum = parseInt(score)
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'text-green-500'
+    if (score >= 6) return 'text-yellow-500'
+    return 'text-red-500'
+  }
+
+  return (
+    <div className='rounded-lg border p-4'>
+      <div className='flex items-center justify-between'>
+        <h3 className='font-medium'>{skill}</h3>
+        <span className={`font-medium ${getScoreColor(scoreNum)}`}>
+          {score}/10
+        </span>
+      </div>
+      <p className='mt-2 text-sm text-muted-foreground'>{evaluation}</p>
+    </div>
+  )
+}
 
 export default TechnicalInterview
