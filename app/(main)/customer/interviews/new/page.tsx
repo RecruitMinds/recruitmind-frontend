@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pencil, Timer } from 'lucide-react'
 import * as z from 'zod'
+import { TagInput } from 'emblor'
 
 import { useCreateInterview } from '@/data/hooks/use-interview'
 import { CreateInterview } from '@/data/types/interview'
@@ -35,7 +36,6 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import LocationSelector from '@/components/ui/location-input'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 
 const formSchema = z
@@ -46,7 +46,13 @@ const formSchema = z
       required_error: 'Work arrangement is required'
     }),
     location: z.string().min(1, 'Location is required'),
-    description: z.string().min(1, 'Description is required'),
+    experienceValue: z.string().min(1, 'Experience value is required'),
+    experienceUnit: z.enum(['years', 'months'], {
+      required_error: 'Experience unit is required'
+    }),
+    skills: z
+      .array(z.object({ id: z.string(), text: z.string() }))
+      .min(1, 'At least one skill is required'),
     includeTechnicalAssessment: z.boolean().default(false),
     skillLevel: z.enum(['easy', 'medium', 'hard']).optional(),
     status: z.enum(['active', 'inactive', 'archived'])
@@ -68,6 +74,7 @@ const CreateInterviewPage = () => {
   const [countryName, setCountryName] = useState<string>('')
   const [isNameManuallyEdited, setIsNameManuallyEdited] = useState(false)
   const createInterview = useCreateInterview()
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,7 +84,9 @@ const CreateInterviewPage = () => {
       role: '',
       work_arrangment: undefined,
       location: '',
-      description: '',
+      experienceValue: '',
+      experienceUnit: 'years',
+      skills: [],
       includeTechnicalAssessment: false,
       skillLevel: undefined,
       status: 'active'
@@ -131,11 +140,14 @@ const CreateInterviewPage = () => {
         role: values.role,
         workArrangements: values.work_arrangment as WorkArrangements,
         location: values.location,
-        description: values.description,
+        experience: `${values.experienceValue} ${values.experienceUnit}`,
+        skills: values.skills.map(skill => skill.text),
         includeTechnicalAssessment: values.includeTechnicalAssessment,
         skillLevel: values.skillLevel as SkillLevel | undefined,
         status: values.status as InterviewStatus
       }
+
+      console.log(createInterviewData)
 
       await createInterview.mutateAsync(createInterviewData)
       toast.success('Interview created successfully')
@@ -299,22 +311,89 @@ const CreateInterviewPage = () => {
               />
             </div>
 
+            <div className='col-span-12 md:col-span-6'>
+              <FormField
+                control={form.control}
+                name='experienceValue'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Experience Required</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='e.g. 2'
+                        type='number'
+                        min='0'
+                        {...field}
+                        className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className='col-span-12 md:col-span-6'>
+              <FormField
+                control={form.control}
+                name='experienceUnit'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className='h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black data-[placeholder]:text-muted-foreground'>
+                          <SelectValue placeholder='Select unit' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='years'>Years</SelectItem>
+                        <SelectItem value='months'>Months</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className='col-span-12'>
               <FormField
                 control={form.control}
-                name='description'
+                name='skills'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job description</FormLabel>
+                    <FormLabel>Required Skills</FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={8}
-                        placeholder='Job description'
-                        className='w-full resize-none rounded-[10px] border-muted-foreground bg-background text-sm focus-visible:ring-black'
-                        {...field}
+                      <TagInput
+                        id='skills-input'
+                        tags={field.value}
+                        setTags={newTags => {
+                          field.onChange(newTags)
+                        }}
+                        placeholder='Add a skill'
+                        styleClasses={{
+                          inlineTagsContainer:
+                            'h-12 w-full rounded-[10px] border-muted-foreground bg-background text-sm focus-within:ring-black focus-within:ring-1 p-2 gap-1.5',
+                          input:
+                            'shadow-none px-2 h-7 focus-visible:ring-0 focus-visible:outline-none',
+                          tag: {
+                            body: 'h-7 relative bg-background border border-primary hover:bg-background rounded-md font-medium text-xs ps-2 pe-7 text-primary',
+                            closeButton:
+                              'absolute -inset-y-px -end-px p-0 rounded-e-md flex size-7 transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-primary hover:text-primary/80'
+                          }
+                        }}
+                        activeTagIndex={activeTagIndex}
+                        setActiveTagIndex={setActiveTagIndex}
                       />
                     </FormControl>
-
+                    <FormDescription>
+                      Add skills required for this role (e.g., React, Node.js,
+                      TypeScript)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

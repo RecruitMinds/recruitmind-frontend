@@ -32,7 +32,8 @@ export interface Interview {
 
 export interface CreateInterview {
   name: string
-  description: string
+  skills: string[]
+  experience: string
   role: string
   location: string
   workArrangements: WorkArrangements
@@ -71,6 +72,11 @@ export interface TechnicalInterview {
     evaluation: string
   }[]
   transcript?: Transcript
+  skillsEvaluation?: {
+    skill: string
+    evaluation: string
+    score: string
+  }[]
 }
 
 export interface TechnicalAssessment {
