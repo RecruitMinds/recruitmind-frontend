@@ -147,8 +147,6 @@ const CreateInterviewPage = () => {
         status: values.status as InterviewStatus
       }
 
-      console.log(createInterviewData)
-
       await createInterview.mutateAsync(createInterviewData)
       toast.success('Interview created successfully')
       router.push('/customer/interviews')
