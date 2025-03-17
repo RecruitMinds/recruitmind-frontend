@@ -163,7 +163,7 @@ export const getColumns = (
                   className='h-12 gap-x-3 rounded-none px-4'
                   onClick={e => {
                     e.stopPropagation()
-                    const interviewLink = `${API_BASE_URL}/interview/${row.original.invitationToken}`
+                    const interviewLink = `${API_BASE_URL}/${row.original.invitationToken}/intro`
                     navigator.clipboard.writeText(interviewLink)
                     toast.success('Interview link copied to clipboard')
                   }}
