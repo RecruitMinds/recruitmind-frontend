@@ -48,13 +48,6 @@ const TechnicalInterview = ({ interview }: TechnicalInterviewProps) => {
                     evaluation={question.evaluation}
                   />
                 ))}
-
-                {/* TODO: Remove Sample Question */}
-                <QuestionEvaluation
-                  question='Explain JavaScript closures and their practical use cases.'
-                  answer='A closure is a function that has access to variables in its outer scope even after the outer function has returned. They are commonly used for data privacy and maintaining state.'
-                  evaluation='Candidate demonstrated strong understanding of closures with practical examples.'
-                />
               </div>
             </ScrollArea>
           </TabsContent>
@@ -69,16 +62,6 @@ const TechnicalInterview = ({ interview }: TechnicalInterviewProps) => {
                     content={message.content}
                   />
                 ))}
-
-                {/* TODO: Remove Sample Transcript */}
-                <TranscriptMessage
-                  role='AI Interviewer'
-                  content='Can you explain what a closure is in JavaScript?'
-                />
-                <TranscriptMessage
-                  role='Candidate'
-                  content="A closure is formed when a function is defined inside another function. The inner function has access to variables in its own scope, in the outer function's scope, and in the global scope."
-                />
               </div>
             </ScrollArea>
           </TabsContent>

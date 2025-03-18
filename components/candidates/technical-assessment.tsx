@@ -42,24 +42,6 @@ const TechnicalAssessment = ({ assessment }: TechnicalAssessmentProps) => {
                     evaluation={question.evaluation}
                   />
                 )}
-
-                {/* TODO: Remove Sample Coding Challenge */}
-                <CodingChallenge
-                  title='Array Manipulation'
-                  description='Implement a function that finds the two numbers in an array that sum up to a target value.'
-                  solution={`function findTwoSum(nums, target) {
- const map = new Map();
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (map.has(complement)) {
-      return [map.get(complement), i];
-    }
-    map.set(nums[i], i);
-  }
-  return [];
-}`}
-                  evaluation='Optimal solution using hash map. Good time complexity O(n).'
-                />
               </div>
             </ScrollArea>
           </TabsContent>
@@ -74,16 +56,6 @@ const TechnicalAssessment = ({ assessment }: TechnicalAssessmentProps) => {
                     content={message.content}
                   />
                 ))}
-
-                {/* TODO: Remove Sample Transcripts */}
-                <TranscriptMessage
-                  role='AI Interviewer'
-                  content='Technical assessment started.'
-                />
-                <TranscriptMessage
-                  role='Candidate'
-                  content='[Submitted solution for Array Manipulation problem]'
-                />
               </div>
             </ScrollArea>
           </TabsContent>
