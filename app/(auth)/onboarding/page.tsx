@@ -86,7 +86,7 @@ export default function OnboardingPage() {
           Share your company details
         </h1>
         <p className='mt-2 text-sm text-muted-foreground'>
-          We'll know how to best meet your needs
+          We&apos;ll know how to best meet your needs
         </p>
       </CardHeader>
 

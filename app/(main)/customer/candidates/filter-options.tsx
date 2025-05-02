@@ -6,7 +6,6 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useInterviewList } from '@/data/hooks/use-interview'
-import { X } from 'lucide-react'
 
 interface FilterOptionsProps {
   setInterviewFilter: (interviewId: string) => void
