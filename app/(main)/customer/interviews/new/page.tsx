@@ -93,6 +93,9 @@ const CreateInterviewPage = () => {
     }
   })
 
+  const role = form.watch('role')
+  const arrangement = form.watch('work_arrangment')
+
   const generateInterviewName = (
     role: string,
     location: string,
@@ -111,18 +114,14 @@ const CreateInterviewPage = () => {
 
   useEffect(() => {
     if (!isNameManuallyEdited) {
-      const role = form.watch('role')
-      const location = countryName
-      const arrangement = form.watch('work_arrangment')
-      const generatedName = generateInterviewName(role, location, arrangement)
+      const generatedName = generateInterviewName(
+        role,
+        countryName,
+        arrangement
+      )
       form.setValue('name', generatedName)
     }
-  }, [
-    form.watch('role'),
-    countryName,
-    form.watch('work_arrangment'),
-    isNameManuallyEdited
-  ])
+  }, [form, role, arrangement, countryName, isNameManuallyEdited])
 
   const enableNameEditing = () => {
     setIsNameEditing(true)
@@ -384,6 +383,9 @@ const CreateInterviewPage = () => {
                               'absolute -inset-y-px -end-px p-0 rounded-e-md flex size-7 transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-primary hover:text-primary/80'
                           }
                         }}
+                        minTags={1}
+                        maxTags={6}
+                        placeholderWhenFull=''
                         activeTagIndex={activeTagIndex}
                         setActiveTagIndex={setActiveTagIndex}
                       />
