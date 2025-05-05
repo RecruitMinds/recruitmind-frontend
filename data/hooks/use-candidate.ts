@@ -4,9 +4,10 @@ import {
   useQuery,
   useQueryClient
 } from '@tanstack/react-query'
-import { Pagination } from '../types/common'
-import { candidateService } from '../services/candidate'
 import { toast } from 'sonner'
+
+import { Pagination } from '../types/common'
+import { useCandidateService } from '../services/candidate'
 
 export function useCandidates({
   pagination,
@@ -17,6 +18,8 @@ export function useCandidates({
   interview?: string
   search?: string
 }) {
+  const candidateService = useCandidateService()
+
   return useQuery({
     queryKey: ['candidates', pagination, interview, search],
     queryFn: () => candidateService.getAll(pagination, interview, search),
@@ -25,6 +28,8 @@ export function useCandidates({
 }
 
 export function useCandidate(candidateId: string, options = {}) {
+  const candidateService = useCandidateService()
+
   return useQuery({
     queryKey: ['candidates', 'detail', candidateId],
     queryFn: () => candidateService.get(candidateId),
@@ -34,6 +39,7 @@ export function useCandidate(candidateId: string, options = {}) {
 
 export function useDeleteCandidate() {
   const queryClient = useQueryClient()
+  const candidateService = useCandidateService()
 
   return useMutation({
     mutationFn: (candidateId: string) => candidateService.delete(candidateId),

@@ -2,11 +2,10 @@ import {
   keepPreviousData,
   useMutation,
   useQuery,
-  useQueryClient,
-  UseQueryOptions
+  useQueryClient
 } from '@tanstack/react-query'
 
-import { interviewService } from '../services/interview'
+import { useInterviewService } from '../services/interview'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
   CreateInterview,
@@ -49,26 +48,31 @@ export function useInterviews({
   pagination: Pagination
   search?: string
 }) {
+  const service = useInterviewService()
+
   return useQuery({
     queryKey: interviewKeys.paginated({ status, pagination, search }),
-    queryFn: () => interviewService.getAll(status, pagination, search),
+    queryFn: () => service.getAll(status, pagination, search),
     placeholderData: keepPreviousData
   })
 }
 
 export function useInterviewList() {
+  const service = useInterviewService()
+
   return useQuery({
     queryKey: interviewKeys.lists(),
-    queryFn: () => interviewService.getInterviewList()
+    queryFn: () => service.getInterviewList()
   })
 }
 
 export function useInterview(id: string) {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useQuery({
     queryKey: interviewKeys.detail(id),
-    queryFn: () => interviewService.getById(id),
+    queryFn: () => service.getById(id),
     enabled: !!id,
     initialData: () => {
       // Try to get interview from existing queries
@@ -97,6 +101,8 @@ export function useInterviewCandidates({
   stage?: HiringStage
   status?: CandidateInterviewStatus
 }) {
+  const service = useInterviewService()
+
   return useQuery({
     queryKey: interviewKeys.candidates({
       interview,
@@ -106,7 +112,7 @@ export function useInterviewCandidates({
       status
     }),
     queryFn: () =>
-      interviewService.getInterviewCandidates(
+      service.getInterviewCandidates(
         interview,
         pagination,
         search,
@@ -119,9 +125,10 @@ export function useInterviewCandidates({
 
 export function useCreateInterview() {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useMutation({
-    mutationFn: (data: CreateInterview) => interviewService.create(data),
+    mutationFn: (data: CreateInterview) => service.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
       queryClient.invalidateQueries({
@@ -133,10 +140,11 @@ export function useCreateInterview() {
 
 export function useInviteCandidate() {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useMutation({
     mutationFn: (data: { interview: string; candidates: InviteCandidate[] }) =>
-      interviewService.inviteCandidate(data),
+      service.inviteCandidate(data),
     onSuccess: (_, { interview }) => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] })
       queryClient.invalidateQueries({
@@ -151,6 +159,7 @@ export function useInviteCandidate() {
 
 export function useUpdateInterview() {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useMutation({
     mutationFn: ({
@@ -159,7 +168,7 @@ export function useUpdateInterview() {
     }: {
       id: string
       data: Partial<CreateInterview>
-    }) => interviewService.update(id, data),
+    }) => service.update(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.detail(id) })
       queryClient.invalidateQueries({ queryKey: interviewKeys.lists() })
@@ -172,6 +181,7 @@ export function useUpdateInterview() {
 
 export function useUpdateCandidateInterview() {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useMutation({
     mutationFn: ({
@@ -182,7 +192,7 @@ export function useUpdateCandidateInterview() {
       interview: string
       candidate: string
       data: Partial<UpdateCandidateInterview>
-    }) => interviewService.updateCandidateInterview(interview, candidate, data),
+    }) => service.updateCandidateInterview(interview, candidate, data),
     onMutate: async ({ interview, candidate, data }) => {
       await queryClient.cancelQueries({
         queryKey: ['interview-candidates', { interview }]
@@ -237,19 +247,22 @@ export function useUpdateCandidateInterview() {
 }
 
 export function useInvitableInterviews(candidateId: string, options = {}) {
+  const service = useInterviewService()
+
   return useQuery({
     queryKey: ['invitable-interviews', candidateId],
-    queryFn: () => interviewService.getInvitableInterviews(candidateId),
+    queryFn: () => service.getInvitableInterviews(candidateId),
     ...options
   })
 }
 
 export function useInviteExistingCandidate() {
   const queryClient = useQueryClient()
+  const service = useInterviewService()
 
   return useMutation({
     mutationFn: (data: { interview: string; candidate: string }) =>
-      interviewService.inviteExistingCandidate(data.interview, data.candidate),
+      service.inviteExistingCandidate(data.interview, data.candidate),
     onSuccess: (_, { interview, candidate }) => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] })
       queryClient.invalidateQueries({
@@ -270,10 +283,12 @@ export function useCandidateInterviewDetails(
   interviewId: string,
   options = {}
 ) {
+  const service = useInterviewService()
+
   return useQuery({
     queryKey: ['candidate-interview-details', candidateId, interviewId],
     queryFn: () =>
-      interviewService.getCandidateInterviewDetails(candidateId, interviewId),
+      service.getCandidateInterviewDetails(candidateId, interviewId),
     ...options
   })
 }

@@ -1,4 +1,4 @@
-import { apiClient } from '../api/client'
+import { useApiClient } from '../api/client'
 import { CandidateList } from '../types/candidate'
 import { PaginatedResponse, Pagination } from '../types/common'
 import {
@@ -16,103 +16,104 @@ import {
   CandidateInterviewStatus
 } from '../types/enums'
 
-export const interviewService = {
-  getAll: async (
-    status: InterviewStatus,
-    pagination: Pagination,
-    search?: string
-  ) => {
-    const { page, limit } = pagination
-    const searchQuery = search ? `&search=${search}` : ''
+export function useInterviewService() {
+  const api = useApiClient()
 
-    return apiClient.fetch<PaginatedResponse<Interview & InterviewProgress>>(
-      `/interview?page=${page}&limit=${limit}&status=${status}${searchQuery}`
-    )
-  },
+  return {
+    getAll: async (
+      status: InterviewStatus,
+      pagination: Pagination,
+      search?: string
+    ) => {
+      const { page, limit } = pagination
+      const searchQuery = search ? `&search=${search}` : ''
 
-  getInterviewList: async () => {
-    return apiClient.fetch<InterviewList[]>(`/interview/list`)
-  },
+      return api.fetch<PaginatedResponse<Interview & InterviewProgress>>(
+        `/interview?page=${page}&limit=${limit}&status=${status}${searchQuery}`
+      )
+    },
 
-  getById: (id: string) => apiClient.fetch<Interview>(`/interview/${id}`),
+    getInterviewList: async () => {
+      return api.fetch<InterviewList[]>(`/interview/list`)
+    },
 
-  getInterviewCandidates: async (
-    interview: string,
-    pagination: Pagination,
-    search?: string,
-    stage?: HiringStage,
-    status?: CandidateInterviewStatus
-  ) => {
-    const { page, limit } = pagination
-    const stageQuery = stage ? `&stage=${stage}` : ''
-    const statusQuery = status ? `&status=${status}` : ''
-    const searchQuery = search ? `&search=${search}` : ''
+    getById: (id: string) => api.fetch<Interview>(`/interview/${id}`),
 
-    return apiClient.fetch<PaginatedResponse<CandidateList>>(
-      `/interview/${interview}/candidates?page=${page}&limit=${limit}${searchQuery}${stageQuery}${statusQuery}`
-    )
-  },
+    getInterviewCandidates: async (
+      interview: string,
+      pagination: Pagination,
+      search?: string,
+      stage?: HiringStage,
+      status?: CandidateInterviewStatus
+    ) => {
+      const { page, limit } = pagination
+      const stageQuery = stage ? `&stage=${stage}` : ''
+      const statusQuery = status ? `&status=${status}` : ''
+      const searchQuery = search ? `&search=${search}` : ''
 
-  getInvitableInterviews: async (candidateId: string) => {
-    return apiClient.fetch<InterviewList[]>(
-      `/interview/candidates/${candidateId}/invitable`
-    )
-  },
+      return api.fetch<PaginatedResponse<CandidateList>>(
+        `/interview/${interview}/candidates?page=${page}&limit=${limit}${searchQuery}${stageQuery}${statusQuery}`
+      )
+    },
 
-  getCandidateInterviewDetails: async (
-    candidate: string,
-    interview: string
-  ) => {
-    return apiClient.fetch<CandidateInterviewDetail>(
-      `/interview/${interview}/candidates/${candidate}/details`
-    )
-  },
+    getInvitableInterviews: async (candidateId: string) => {
+      return api.fetch<InterviewList[]>(
+        `/interview/candidates/${candidateId}/invitable`
+      )
+    },
 
-  create: (data: CreateInterview) =>
-    apiClient.fetch<Interview>('/interview', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    getCandidateInterviewDetails: async (
+      candidate: string,
+      interview: string
+    ) => {
+      return api.fetch<CandidateInterviewDetail>(
+        `/interview/${interview}/candidates/${candidate}/details`
+      )
+    },
 
-  inviteCandidate: ({
-    interview,
-    candidates
-  }: {
-    interview: string
-    candidates: InviteCandidate[]
-  }) =>
-    apiClient.fetch<void>(`/interview/${interview}/invite`, {
-      method: 'POST',
-      body: JSON.stringify({ candidates })
-    }),
+    create: (data: CreateInterview) =>
+      api.fetch<Interview>('/interview', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }),
 
-  inviteExistingCandidate: (interview: string, candidate: string) =>
-    apiClient.fetch<Interview>(`/interview/${interview}/invite-existing`, {
-      method: 'POST',
-      body: JSON.stringify({ candidateId: candidate })
-    }),
+    inviteCandidate: ({
+      interview,
+      candidates
+    }: {
+      interview: string
+      candidates: InviteCandidate[]
+    }) =>
+      api.fetch<void>(`/interview/${interview}/invite`, {
+        method: 'POST',
+        body: JSON.stringify({ candidates })
+      }),
 
-  update: (id: string, data: Partial<CreateInterview>) =>
-    apiClient.fetch<Interview>(`/interview/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    }),
+    inviteExistingCandidate: (interview: string, candidate: string) =>
+      api.fetch<Interview>(`/interview/${interview}/invite-existing`, {
+        method: 'POST',
+        body: JSON.stringify({ candidateId: candidate })
+      }),
 
-  updateCandidateInterview: (
-    interview: string,
-    candidate: string,
-    data: UpdateCandidateInterview
-  ) =>
-    apiClient.fetch<Interview>(
-      `/interview/${interview}/candidates/${candidate}`,
-      {
+    update: (id: string, data: Partial<CreateInterview>) =>
+      api.fetch<Interview>(`/interview/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data)
-      }
-    )
+      }),
 
-  // delete: (id: number) =>
-  //   apiClient.fetch<void>(`/interview/${id}`, {
-  //     method: 'DELETE'
-  //   })
+    updateCandidateInterview: (
+      interview: string,
+      candidate: string,
+      data: UpdateCandidateInterview
+    ) =>
+      api.fetch<Interview>(`/interview/${interview}/candidates/${candidate}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data)
+      })
+
+    // delete: (id: number) =>
+    //   api.fetch<void>(`/interview/${id}`, {
+    //     method: 'DELETE'
+    //   })
+  }
 }
