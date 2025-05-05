@@ -1,3 +1,5 @@
+import { useAuth } from '@clerk/nextjs'
+
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export class ApiError extends Error {
@@ -9,15 +11,20 @@ export class ApiError extends Error {
   }
 }
 
+// Base API client without authentication
 export const apiClient = {
-  async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  async fetch<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    token?: string
+  ): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
-      },
-      credentials: 'include'
+        ...options.headers,
+        ...(token && { Authorization: `Bearer ${token}` })
+      }
     })
 
     if (!response.ok) {
@@ -35,5 +42,17 @@ export const apiClient = {
     }
 
     return response.json()
+  }
+}
+
+// Hook to use the API client with authentication
+export function useApiClient() {
+  const { getToken } = useAuth()
+
+  return {
+    async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+      const token = (await getToken()) || undefined
+      return apiClient.fetch<T>(endpoint, options, token)
+    }
   }
 }
