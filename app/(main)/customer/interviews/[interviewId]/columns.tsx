@@ -10,7 +10,6 @@ import {
 import { ColumnDef } from '@tanstack/react-table'
 import { toast } from 'sonner'
 
-import { API_BASE_URL } from '@/data/api/client'
 import { HiringStage } from '@/data/types/enums'
 import { CandidateList } from '@/data/types/candidate'
 import { formatSnakeCase, toShortDate } from '@/lib/utils'
@@ -163,7 +162,7 @@ export const getColumns = (
                   className='h-12 gap-x-3 rounded-none px-4'
                   onClick={e => {
                     e.stopPropagation()
-                    const interviewLink = `${API_BASE_URL}/${row.original.invitationToken}/intro`
+                    const interviewLink = `${process.env.NEXT_PUBLIC_INTERVIEW_CLIENT}/${row.original.invitationToken}/intro`
                     navigator.clipboard.writeText(interviewLink)
                     toast.success('Interview link copied to clipboard')
                   }}
