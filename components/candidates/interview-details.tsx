@@ -121,7 +121,11 @@ const InterviewDetails = ({
           )}
 
           <div className='col-span-1'>
-            <AntiCheatingMonitor interviewStatus={data?.status} />
+            <AntiCheatingMonitor
+              interviewStatus={data?.status}
+              interviewId={interviewId}
+              candidateId={candidateId}
+            />
           </div>
         </div>
       </div>

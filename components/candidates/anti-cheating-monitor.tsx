@@ -1,24 +1,45 @@
-import {
-  Globe,
-  MapPin,
-  Maximize,
-  MonitorSmartphone,
-  Mouse,
-  Video
-} from 'lucide-react'
+import { MapPin, MonitorSmartphone, Mouse, Video } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { CandidateInterviewStatus } from '@/data/types/enums'
 
 import { Separator } from '@/components/ui/separator'
+import { useCandidateInterviewDetails } from '@/data/hooks/use-interview'
+import { useEffect, useState } from 'react'
 
 interface AntiCheatingMonitorProps {
   interviewStatus?: CandidateInterviewStatus
+  interviewId: string
+  candidateId: string
 }
 
-const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
+interface meta_info {
+  device_name: string
+  location: string
+  tab_switch_count: number
+}
+
+const AntiCheatingMonitor = ({
+  interviewStatus,
+  interviewId,
+  candidateId
+}: AntiCheatingMonitorProps) => {
   const isInterviewCompleted =
     interviewStatus === CandidateInterviewStatus.COMPLETED
+  const { data } = useCandidateInterviewDetails(candidateId, interviewId)
+  const [metaInfo, setMetaInfo] = useState<meta_info | null>(null)
+  async function meta_data() {
+    const token = data?.invitationToken
+    const res = await fetch(
+      `https://recruitmind-proctoring-production.up.railway.app/meta_info/${token}`
+    )
+    const meta = await res.json()
+    setMetaInfo(meta)
+  }
+
+  useEffect(() => {
+    meta_data()
+  }, [data?.invitationToken])
 
   return (
     <>
@@ -35,8 +56,8 @@ const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
             <MonitorSmartphone className='size-4' />
             <span>Device used</span>
           </div>
-          {isInterviewCompleted ? (
-            <span className='font-bold'>Desktop</span>
+          {metaInfo?.device_name ? (
+            <span className='font-bold'>{metaInfo?.device_name}</span>
           ) : (
             <span>N/A</span>
           )}
@@ -47,10 +68,10 @@ const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
             <MapPin className='size-4' />
             <span>Location</span>
           </div>
-          {isInterviewCompleted ? (
-            <span className='font-bold'>Colombo (1), LK</span>
+          {metaInfo?.location ? (
+            <span className='font-bold'>{metaInfo.location}</span>
           ) : (
-            <span>N/A</span>
+            <span>{metaInfo?.location}</span>
           )}
         </div>
         <Separator className='my-2.5' />
@@ -58,25 +79,25 @@ const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
 
       <div className='mb-7 space-y-1.5 text-sm text-foreground'>
         {[
-          {
-            label: 'Filled out only once from IP address?',
-            Icon: Globe,
-            value: isInterviewCompleted ? 'Yes' : 'N/A'
-          },
+          // {
+          //   label: 'Filled out only once from IP address?',
+          //   Icon: Globe,
+          //   value: isInterviewCompleted ? 'Yes' : 'N/A'
+          // },
           {
             label: 'Webcam enabled?',
             Icon: Video,
-            value: isInterviewCompleted ? 'Yes' : 'N/A'
+            value: 'Yes'
           },
-          {
-            label: 'Full-screen mode always active?',
-            Icon: Maximize,
-            value: isInterviewCompleted ? 'No' : 'N/A'
-          },
+          // {
+          //   label: 'Full-screen mode always active?',
+          //   Icon: Maximize,
+          //   value: isInterviewCompleted ? 'No' : 'N/A'
+          // },
           {
             label: 'Mouse always in assessment window?',
             Icon: Mouse,
-            value: isInterviewCompleted ? 'Yes' : 'N/A'
+            value: (metaInfo?.tab_switch_count || 0) >= 0 ? 'No' : 'yes'
           }
         ].map(({ label, Icon, value }, index) => (
           <div
@@ -98,6 +119,19 @@ const AntiCheatingMonitor = ({ interviewStatus }: AntiCheatingMonitorProps) => {
             </span>
           </div>
         ))}
+        <div className='mt-10'>
+          <button className='bg-zinc-900 p-2 text-white'>
+            <a
+              href={`https://recruitmind-proctoring-production.up.railway.app/report/${data?.invitationToken}`}
+              download
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white'
+            >
+              Download Report
+            </a>
+          </button>
+        </div>
       </div>
 
       {isInterviewCompleted && (

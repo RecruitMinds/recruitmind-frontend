@@ -101,6 +101,7 @@ export interface CandidateInterviewDetail {
   stage: HiringStage
   bestScore: number
   overallScore: number
+  invitationToken: string
   includeTechnicalAssessment: boolean
   technicalInterview: TechnicalInterview
   technicalAssessment: TechnicalAssessment
